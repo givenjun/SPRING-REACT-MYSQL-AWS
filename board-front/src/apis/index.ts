@@ -9,7 +9,7 @@ import { GetPopularListResponseDto, GetRelationListResponseDto } from './respons
 import { PatchNicknameRequestDto, PatchProfileImageRequestDto } from './request/user';
 
 // const DOMAIN = 'http://localhost:4000';
-const DOMAIN = process.env.REACT_APP_API_URL || 'http://localhost:4000';
+const DOMAIN = process.env.REACT_APP_API_URL;
 
 const API_DOMAIN = `${DOMAIN}/api/v1`;
 
