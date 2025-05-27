@@ -12,10 +12,14 @@ import lombok.NoArgsConstructor;
 @Table(name="image")
 public class ImageEntity {
 
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int sequence;
-    @JoinColumn(name = "board_number", referencedColumnName = "board_number", nullable = true)
+
+    @Column(name = "board_number", nullable = false)
     private int boardNumber;
+
+    @Column(nullable = false)
     private String image;
 
     public ImageEntity(int boardNumber, String image) {

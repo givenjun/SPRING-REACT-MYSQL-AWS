@@ -1,7 +1,6 @@
 package com.capstone.board_back.entity;
 
 import com.capstone.board_back.dto.request.auth.SignUpRequestDto;
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -24,7 +23,6 @@ public class UserEntity {
     private String address;
     private String addressDetail;
     private String profileImage;
-    @Column(name="agreed_personal")
     private boolean agreedPersonal;
 
     public UserEntity(SignUpRequestDto dto) {

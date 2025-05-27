@@ -59,7 +59,6 @@ public class WebSecurityConfig {
     protected CorsConfigurationSource corsConfigurationSource() {
 
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.addAllowedOrigin("http://localhost:3000");
         configuration.addAllowedOrigin("http://localhost");
         configuration.setAllowCredentials(true);
         configuration.addAllowedMethod("*");
@@ -84,7 +83,7 @@ class FailedAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
         response.setContentType("application/json");
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-        response.getWriter().write("{ \"code\": \"AF\", \"message\": \"Authorization failed.\"}\" }");
+        response.getWriter().write("{ \"code\": \"AF\", \"message\": \"Authorization failed.\"} }");
 
     }
 }
