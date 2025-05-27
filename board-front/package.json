@@ -2,7 +2,7 @@
   "name": "board-front",
   "version": "0.1.0",
   "private": true,
-  "homepage": ".",
+  "homepage": "http://13.124.61.207",
   "dependencies": {
     "@testing-library/dom": "^10.4.0",
     "@testing-library/jest-dom": "^6.6.3",
