@@ -10,6 +10,7 @@ import { MAIN_PATH } from 'constant';
 import { useNavigate } from 'react-router-dom';
 import { Address, useDaumPostcodePopup } from 'react-daum-postcode';
 import SignUpRequestDto from 'apis/request/auth/sign-up.request.dto';
+import { customErrToast } from 'hooks';
 
 //          component: 인증 화면 컴포넌트          //
 export default function Authentication() {
@@ -45,11 +46,11 @@ export default function Authentication() {
     //          function: sign in response 처리 함수           //
     const signInResponse = (responseBody: SignInResponseDto | ResponseDto | null) => {
       if (!responseBody) {
-        alert('네트워크 이상입니다.');
+        customErrToast('네트워크 이상입니다.');
         return;
       }
       const { code } = responseBody;
-      if (code === 'DBE') alert('데이터베이스 오류입니다.');
+      if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
       if (code === 'SF' || code === 'VF') setError(true);
       if (code !== 'SU') return;
 
@@ -238,10 +239,10 @@ export default function Authentication() {
         setTelNumberErrorMessage('중복되는 휴대전화번호입니다.')
       }
       if (code === 'VF') {
-        alert('모든 값을 입력하세요.');
+        customErrToast('모든 값을 입력하세요.');
       }
       if (code === 'DBE') {
-        alert('데이터베이스 오류입니다.');
+        customErrToast('데이터베이스 오류입니다.');
       }
       if (code !== 'SU') return;
 

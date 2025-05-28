@@ -5,6 +5,7 @@ import App from './App';
 import reportWebVitals from './reportWebVitals';
 import { BrowserRouter } from 'react-router-dom';
 import { CookiesProvider } from 'react-cookie';
+import { ToastContainer } from 'react-toastify';
 
 
 const root = ReactDOM.createRoot(
@@ -15,6 +16,7 @@ root.render(
     <CookiesProvider>
       <BrowserRouter>
         <App />
+        <ToastContainer />
       </BrowserRouter>
     </CookiesProvider>
   </React.StrictMode>

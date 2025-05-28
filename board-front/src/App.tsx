@@ -16,6 +16,7 @@ import { GetSignInUserResponseDto } from 'apis/response/user';
 import { ResponseDto } from 'apis/response';
 import { User } from 'types/interface';
 import { useCookies } from 'react-cookie';
+import Board from 'views/Board';
 
 
 //          component: Application 컴포넌트         //
@@ -61,11 +62,10 @@ function App() {
         <Route path={AUTH_PATH()} element={<Authentication />} />
         <Route path={SEARCH_PATH(':searchWord')} element={<Search />} />
         <Route path={USER_PATH(':userEmail')} element={<UserP />} />
-        <Route path={BOARD_PATH()}>
-          <Route path={BOARD_WRITE_PATH()} element={<BoardWrite />} />
-          <Route path={BOARD_DETAIL_PATH(':boardNumber')} element={<BoardDetail />} />
-          <Route path={BOARD_UPDATE_PATH(':boardNumber')} element={<BoardUpdate />} />
-        </Route>
+        <Route path={BOARD_PATH()} element={<Board />} />
+        <Route path={BOARD_PATH() + '/' + BOARD_WRITE_PATH()} element={<BoardWrite />} />
+        <Route path={BOARD_PATH() + '/' + BOARD_DETAIL_PATH(':boardNumber')} element={<BoardDetail />} />
+        <Route path={BOARD_PATH() + '/' + BOARD_UPDATE_PATH(':boardNumber')} element={<BoardUpdate />} />
         <Route path='*' element={<h1>404 Not Found</h1>}></Route>
       </Route>
     </Routes>

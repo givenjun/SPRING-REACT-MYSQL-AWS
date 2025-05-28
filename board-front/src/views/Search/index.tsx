@@ -8,7 +8,7 @@ import Pagination from 'components/Pagination';
 import { GetRelationListRequest, getSearchBoardListRequest } from 'apis';
 import { GetSearchBoardListResponseDto } from 'apis/response/board';
 import { ResponseDto } from 'apis/response';
-import { usePagination } from 'hooks';
+import { customErrToast, usePagination } from 'hooks';
 import { GetRelationListResponseDto } from 'apis/response/search';
 
 //          component: 검색 화면 컴포넌트          //
@@ -43,7 +43,7 @@ export default function Search() {
     if (!responseBody) return;
     const { code } = responseBody;
 
-    if (code === 'DBE') alert('데이터베이스 오류입니다.');
+    if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
     if (code !== 'SU') return;
 
     if (!searchWord) return;
@@ -57,7 +57,7 @@ export default function Search() {
     if (!responseBody) return;
     const { code } = responseBody;
 
-    if (code === 'DBE') alert('데이터베이스 오류입니다.');
+    if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
     if (code !== 'SU') return;
 
     if (!searchWord) return;

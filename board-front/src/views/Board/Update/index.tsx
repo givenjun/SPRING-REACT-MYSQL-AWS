@@ -9,6 +9,7 @@ import { getBoardRequest } from 'apis';
 import { GetBoardResponseDto } from 'apis/response/board';
 import { ResponseDto } from 'apis/response';
 import { convertUrlsToFile } from 'utils';
+import { customErrToast } from 'hooks';
 
 
 //          component: 게시물 수정 화면 컴포넌트          //
@@ -43,8 +44,8 @@ export default function BoardUpdate() {
   const getBoardResponse = (responseBody: GetBoardResponseDto | ResponseDto | null) => {
     if (!responseBody) return;
     const { code } = responseBody;
-    if (code === 'NB') alert('존재하지 않는 게시물입니다.');
-    if (code === 'DBE') alert('데이터베이스 오류입니다.');
+    if (code === 'NB') customErrToast('존재하지 않는 게시물입니다.');
+    if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
     if (code !== 'SU') {
       navigate(MAIN_PATH());
       return;

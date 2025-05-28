@@ -9,6 +9,7 @@ import { fileUploadRequest, patchBoardRequest, postBoardRequest } from 'apis';
 import { PatchBoardRequestDto, PostBoardRequestDto } from 'apis/request/board';
 import { PatchBoardResponseDto, PostBoardResponseDto } from 'apis/response/board';
 import { ResponseDto } from 'apis/response';
+import { customErrToast } from 'hooks';
 
 //          component: 헤더 레이아웃          //
 export default function Header() {
@@ -27,6 +28,8 @@ export default function Header() {
   const [ isMainPage, setMainPage ] = useState<boolean>(false);
   //          state: 검색 페이지 상태          //
   const [ isSearchPage, setSearchPage ] = useState<boolean>(false);
+  //          state: 게시물 페이지 상태          //
+  const [ isBoardPage, setBoardPage ] = useState<boolean>(false);
   //          state: 게시물 상세 페이지 상태          //
   const [ isBoardDetailPage, setBoardDetailPage ] = useState<boolean>(false);
   //          state: 게시물 작성 페이지 상태          //
@@ -42,7 +45,15 @@ export default function Header() {
   //          event handler: 로고 클릭 이벤트 처리 함수          //
   const onLogoClickHandler = () => {
     navigate(MAIN_PATH());
-  }
+  };
+  //          event handler: 업로드 버튼 클릭 이벤트 처리 함수          //
+  const onMainClickHandler = () => {
+    navigate(MAIN_PATH());
+  };
+  //          event handler: 업로드 버튼 클릭 이벤트 처리 함수          //
+  const onBoardClickHandler = () => {
+    navigate(BOARD_PATH());
+  };
 
   //          component: 검색 버튼 컴포넌트         //
   const SearchButton = () => {
@@ -125,7 +136,6 @@ export default function Header() {
       navigate(MAIN_PATH());
     };
 
-
     //          render: 로그아웃 버튼 컴포넌트 렌더링          //
     if (isLogin && userEmail === loginUser?.email)
     return <div className='white-button' onClick={onSignOutButtonClickHandler}>{'로그아웃'}</div>;
@@ -149,9 +159,9 @@ export default function Header() {
       if (!responseBody) return;
       const { code } = responseBody;
 
-      if (code === 'DBE') alert('데이터베이스 오류입니다.');
+      if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
       if (code === 'AF' || code === 'NU' ) navigate(AUTH_PATH());
-      if (code === 'VF') alert('제목과 내용은 필수입니다.');
+      if (code === 'VF') customErrToast('제목과 내용은 필수입니다.');
       if (code !== 'SU') return;
 
       resetBoard();
@@ -164,9 +174,9 @@ export default function Header() {
       if (!responseBody) return;
       const { code } = responseBody;
 
-      if (code === 'DBE') alert('데이터베이스 오류입니다.');
+      if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
       if (code === 'AF' || code === 'NU' || code === 'NB' || code === 'NP') navigate(AUTH_PATH());
-      if (code === 'VF') alert('제목과 내용은 필수입니다.');
+      if (code === 'VF') customErrToast('제목과 내용은 필수입니다.');
       if (code !== 'SU') return;
 
       if (!boardNumber) return;
@@ -201,9 +211,9 @@ export default function Header() {
         };
         patchBoardRequest(boardNumber, requestBody, accessToken).then(patchBoardResponse);
       }
-
-      
     }
+
+    
 
     //          render: 업로드 버튼 컴포넌트 렌더링          //
     if (title && content)
@@ -220,6 +230,8 @@ export default function Header() {
     setMainPage(isMainPage);
     const isSearchPage = pathname.startsWith(SEARCH_PATH(''));
     setSearchPage(isSearchPage);
+    const isBoardPage = pathname.startsWith(BOARD_PATH());
+    setBoardPage(isBoardPage);
     const isBoardDetailPage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_DETAIL_PATH(''));
     setBoardDetailPage(isBoardDetailPage);
     const isBoardWritePage = pathname.startsWith(BOARD_PATH() + '/' + BOARD_WRITE_PATH());
@@ -244,9 +256,14 @@ export default function Header() {
           </div>
           <div className='header-logo'>{'Hanbat Board'}</div>
         </div>
+        <div className='header-route-box'>
+          <div className='header-route' onClick={onMainClickHandler}>{'   홈   '}</div>
+          <div className='header-route' onClick={onBoardClickHandler}>{'커뮤니티'}</div>
+          <div className='header-route'>{'공지사항'}</div>
+        </div>
         <div className='header-right-box'>
-          {(isAuthPage || isMainPage || isSearchPage || isBoardDetailPage) && <SearchButton />}
-          {(isMainPage || isSearchPage || isBoardDetailPage || isUserPage) && <MyPageButton />}
+          {(isAuthPage || isMainPage || isSearchPage || isBoardDetailPage || isBoardPage && !isBoardWritePage && !isBoardUpdatePage) && <SearchButton />}
+          {(isMainPage || isSearchPage || isBoardDetailPage || isUserPage || isBoardPage && !isBoardWritePage && !isBoardUpdatePage) && <MyPageButton />}
           {(isBoardWritePage || isBoardUpdatePage) && <UploadButton />}
         </div>
       </div>

@@ -11,7 +11,7 @@ import { GetUserResponseDto, PatchNicknameResponseDto, PatchProfileImageResponse
 import { ResponseDto } from 'apis/response';
 import { PatchNicknameRequestDto, PatchProfileImageRequestDto } from 'apis/request/user';
 import { useCookies } from 'react-cookie';
-import { usePagination } from 'hooks';
+import { customErrToast, usePagination } from 'hooks';
 import { GetUserBoardListResponseDto } from 'apis/response/board';
 import Pagination from 'components/Pagination';
 
@@ -36,7 +36,7 @@ export default function User() {
         setIsLoadingUserInfo(false);
         if (!responseBody) {
             if (!userNotFoundAlertShown) {
-                alert('존재하지 않는 유저입니다.');
+                customErrToast('존재하지 않는 유저입니다.');
                 setUserNotFoundAlertShown(true);
             }
             return;
@@ -44,17 +44,17 @@ export default function User() {
         const { code } = responseBody;
         if (code === 'NU') {
             if (!userNotFoundAlertShown) {
-                alert('존재하지 않는 유저입니다.');
+                customErrToast('존재하지 않는 유저입니다.');
                 setUserNotFoundAlertShown(true);
             }
             return;
         }
         if (code === 'DBE') {
-            if (!userNotFoundAlertShown) { alert('데이터베이스 오류입니다.'); setUserNotFoundAlertShown(true); }
+            if (!userNotFoundAlertShown) { customErrToast('데이터베이스 오류입니다.'); setUserNotFoundAlertShown(true); }
             return;
         }
         if (code !== 'SU') {
-            if (!userNotFoundAlertShown) { alert('알 수 없는 오류로 사용자 정보를 가져오지 못했습니다.'); setUserNotFoundAlertShown(true); }
+            if (!userNotFoundAlertShown) { customErrToast('알 수 없는 오류로 사용자 정보를 가져오지 못했습니다.'); setUserNotFoundAlertShown(true); }
             return;
         }
 
@@ -128,11 +128,11 @@ export default function User() {
         const patchProfileImageResponse = (responseBody: PatchProfileImageResponseDto | ResponseDto | null) => {
             if (!responseBody) return;
             const { code } = responseBody;
-            if (code === 'AF') alert('인증에 실패했습니다.');
+            if (code === 'AF') customErrToast('인증에 실패했습니다.');
             else if (code === 'NU') {
-                 if (!userNotFoundAlertShown) { alert('존재하지 않는 유저입니다.'); setUserNotFoundAlertShown(true); }
+                 if (!userNotFoundAlertShown) { customErrToast('존재하지 않는 유저입니다.'); setUserNotFoundAlertShown(true); }
             }
-            else if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            else if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
             else if (code === 'SU') {
                 refreshUserProfile(); // 성공 시 프로필 정보 갱신
             }
@@ -141,13 +141,13 @@ export default function User() {
         const patchNicknameResponse = (responseBody: PatchNicknameResponseDto | ResponseDto | null) => {
             if (!responseBody) return;
             const { code } = responseBody;
-            if (code === 'VF') alert('닉네임은 필수입니다.');
-            else if (code === 'AF') alert('인증에 실패했습니다.');
-            else if (code === 'DN') alert('중복된 닉네임입니다.');
+            if (code === 'VF') customErrToast('닉네임은 필수입니다.');
+            else if (code === 'AF') customErrToast('인증에 실패했습니다.');
+            else if (code === 'DN') customErrToast('중복된 닉네임입니다.');
             else if (code === 'NU') {
-                if (!userNotFoundAlertShown) { alert('존재하지 않는 유저입니다.'); setUserNotFoundAlertShown(true); }
+                if (!userNotFoundAlertShown) { customErrToast('존재하지 않는 유저입니다.'); setUserNotFoundAlertShown(true); }
             }
-            else if (code === 'DBE') alert('데이터베이스 오류입니다.');
+            else if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
             else if (code === 'SU') {
                 refreshUserProfile(); // 성공 시 프로필 정보 갱신
                 setNicknameChange(false);
@@ -241,7 +241,7 @@ export default function User() {
             if (!responseBody) { setTotalList([]); setCount(0); return; }
             const { code } = responseBody;
             if (code === 'NU') { setTotalList([]); setCount(0); return; }
-            if (code === 'DBE') { alert('게시물 목록 오류'); setTotalList([]); setCount(0); return; }
+            if (code === 'DBE') { customErrToast('게시물 목록 오류'); setTotalList([]); setCount(0); return; }
             if (code !== 'SU') { setTotalList([]); setCount(0); return; }
             const { userBoardList } = responseBody as GetUserBoardListResponseDto;
             setTotalList(userBoardList);

@@ -261,3 +261,106 @@
     display: flex;
     justify-content: flex-end;
 }
+
+.icon-relative {
+    position: relative;
+}
+
+.pop {
+  animation: pop 0.3s ease-out;
+}
+
+@keyframes pop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.4); }
+  100% { transform: scale(1); }
+}
+
+.floating-heart {
+  user-select: none;
+  position: fixed;
+  top: 300px;
+  left: 50%;
+  transform: translateX(-50%);
+  animation: floatUp 1.8s ease-in-out forwards;
+  font-size: 250px;
+  pointer-events: none;
+  z-index: 10;
+  opacity: 1;
+  text-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes floatUp {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, 0) scale(0.3);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -30px) scale(1.2);
+  }
+  25% {
+    opacity: 1;
+    transform: translate(-50%, -30px) scale(1.5);
+  }
+  35% {
+    opacity: 1;
+    transform: translate(-50%, -30px) scale(1.2);
+  }
+  45% {
+    opacity: 1;
+    transform: translate(-50%, -30px) scale(1.5);
+  }
+  55% {
+    opacity: 1;
+    transform: translate(-50%, -30px) scale(1.2);
+  }
+  60% {
+    opacity: 1;
+    transform: translate(-50%, -30px) scale(1.2);
+  }
+  
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -180px) scale(0.0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -250px) scale(0.0);
+  }
+}
+/* @keyframes heartRain {
+  0% {
+    opacity: 0;
+    transform: translate(-50%, 0) scale(0.6);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translate(-50%, -30px) scale(1.2);
+  }
+
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -100px) scale(1.1);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translate(-50%, -180px) scale(0.0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate(-50%, -250px) scale(0.0);
+  }
+}
+
+.global-heart {
+  position: fixed;
+  animation: heartRain 0.6s ease-out forwards;
+  pointer-events: none;
+} */

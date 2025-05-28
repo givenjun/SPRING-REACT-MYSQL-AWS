@@ -10,7 +10,6 @@ import { PatchNicknameRequestDto, PatchProfileImageRequestDto } from './request/
 
 const DOMAIN = 'http://localhost:4000';
 // const DOMAIN = process.env.REACT_APP_API_URL;
-// alert(DOMAIN);
 const API_DOMAIN = `${DOMAIN}/api/v1`;
 
 const authorization = (accessToken: string) => {

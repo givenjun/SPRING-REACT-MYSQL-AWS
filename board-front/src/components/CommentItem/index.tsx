@@ -21,7 +21,7 @@ export default function CommentItem({ commentListItem, onDeleteComment }: Props)
 
     //         function: 작성일 경과시간 함수           //
     const getElapsedTime = () => {
-        const now = dayjs().add(9, 'hour'); // 한국 시간 기준으로 보정 (필요시)
+        const now = dayjs() // 한국 시간 기준으로 보정 (필요시)
         const writeTime = dayjs(writeDatetime);
 
         const gap = now.diff(writeTime, 's');
