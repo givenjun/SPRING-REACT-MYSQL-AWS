@@ -54,7 +54,9 @@ public class BoardEntity {
     }
 
     public void decreaseFavoriteCount() {
-        this.favoriteCount--;
+        if (this.favoriteCount > 0) { // 좋아요 수가 음수가 되지 않도록 방어
+            this.favoriteCount--;
+        }
     }
 
     public void increaseCommentCount() {
@@ -62,7 +64,9 @@ public class BoardEntity {
     }
 
     public void decreaseCommentCount() {
-        this.commentCount--;
+        if (this.commentCount > 0) { // 댓글 수가 음수가 되지 않도록 방어
+            this.commentCount--;
+        }
     }
 
     public void patchBoard(PatchBoardRequestDto dto) {

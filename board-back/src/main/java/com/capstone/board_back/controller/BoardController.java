@@ -127,4 +127,13 @@ public class BoardController {
         return response;
     }
 
+    // ✨ 댓글 삭제 API 엔드포인트 추가
+    @DeleteMapping("/comment/{commentNumber}") // 경로 예시: /api/v1/board/comment/{commentNumber}
+    public ResponseEntity<? super DeleteCommentResponseDto> deleteComment(
+            @PathVariable("commentNumber") Integer commentNumber,
+            @AuthenticationPrincipal String email
+    ) {
+        ResponseEntity<? super DeleteCommentResponseDto> response = boardService.deleteComment(commentNumber, email);
+        return response;
+    }
 }

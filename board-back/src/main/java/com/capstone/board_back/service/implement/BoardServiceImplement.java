@@ -11,6 +11,7 @@ import com.capstone.board_back.repository.resultSet.GetBoardResultSet;
 import com.capstone.board_back.repository.resultSet.GetCommnetListResultSet;
 import com.capstone.board_back.repository.resultSet.GetFavoriteListResultSet;
 import com.capstone.board_back.service.BoardService;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -355,5 +356,41 @@ public class BoardServiceImplement implements BoardService {
 
         return DeleteBoardResponseDto.success();
 
+    }
+
+    @Override
+    @Transactional // 데이터 변경 작업이므로 트랜잭션 처리 권장
+    public ResponseEntity<? super DeleteCommentResponseDto> deleteComment(Integer commentNumber, String email) {
+        try {
+            // 1. 댓글 작성자 확인을 위해 사용자 존재 여부 확인 (선택적이지만, email 유효성 검사)
+            boolean existedUser = userRepository.existsByEmail(email);
+            if (!existedUser) return DeleteCommentResponseDto.notExistUser(); // 또는 적절한 오류 응답
+
+            // 2. 삭제할 댓글 조회
+            CommentEntity commentEntity = commentRepository.findById(commentNumber).orElse(null);
+            if (commentEntity == null) return DeleteCommentResponseDto.notExistComment(); // 또는 적절한 오류 응답
+
+            // 3. 댓글 작성자와 요청한 사용자가 동일한지 확인 (권한 확인)
+            String commentWriterEmail = commentEntity.getUserEmail();
+            boolean isWriter = email.equals(commentWriterEmail);
+            if (!isWriter) return DeleteCommentResponseDto.notPermission(); // 또는 적절한 오류 응답
+
+            // 4. 댓글 삭제
+            commentRepository.delete(commentEntity);
+
+            // 5. 해당 게시물의 댓글 수 감소
+            BoardEntity boardEntity = boardRepository.findByBoardNumber(commentEntity.getBoardNumber());
+            // 게시물이 존재하고, 댓글 수가 0 이상일 때만 감소 (방어 코드)
+            if (boardEntity != null && boardEntity.getCommentCount() > 0) {
+                boardEntity.decreaseCommentCount(); // BoardEntity에 추가한 메소드 사용
+                boardRepository.save(boardEntity);
+            }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError(); // 공통 데이터베이스 오류 사용
+        }
+
+        return DeleteCommentResponseDto.success(); // 성공 응답
     }
 }

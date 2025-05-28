@@ -15,6 +15,8 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
     @Query(
             value =
                 "SELECT " +
+                "    C.comment_number AS commentNumber, " +   // ✨ 댓글 번호 추가
+                "    C.user_email AS userEmail, " +         // ✨ 댓글 작성자 이메일 추가
                 "U.nickname AS nickname, " +
                 "U.profile_image AS profileImage, " +
                 "C.write_datetime AS writeDatetime, " +

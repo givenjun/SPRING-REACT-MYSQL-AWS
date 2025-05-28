@@ -4,13 +4,13 @@ import { SignInResponseDto, SingUpResponseDto } from './response/auth';
 import { ResponseDto } from './response';
 import { GetSignInUserResponseDto, GetUserResponseDto, PatchNicknameResponseDto, PatchProfileImageResponseDto } from './response/user';
 import { PatchBoardRequestDto, PostBoardRequestDto, PostCommentRequestDto } from './request/board';
-import { DeleteBoardResponseDto, GetBoardResponseDto, GetCommentListResponseDto, GetFavoriteListResponseDto, GetLatestBoardListResponseDto, GetSearchBoardListResponseDto, GetTop3BoardListResponseDto, GetUserBoardListResponseDto, IncreaseViewCountResponseDto, PatchBoardResponseDto, PostBoardResponseDto, PostCommentResponseDto, PutFavoriteResponseDto } from './response/board';
+import { DeleteBoardResponseDto, DeleteCommentResponseDto, GetBoardResponseDto, GetCommentListResponseDto, GetFavoriteListResponseDto, GetLatestBoardListResponseDto, GetSearchBoardListResponseDto, GetTop3BoardListResponseDto, GetUserBoardListResponseDto, IncreaseViewCountResponseDto, PatchBoardResponseDto, PostBoardResponseDto, PostCommentResponseDto, PutFavoriteResponseDto } from './response/board';
 import { GetPopularListResponseDto, GetRelationListResponseDto } from './response/search';
 import { PatchNicknameRequestDto, PatchProfileImageRequestDto } from './request/user';
 
-// const DOMAIN = 'http://localhost:4000';
-const DOMAIN = process.env.REACT_APP_API_URL;
-alert(DOMAIN);
+const DOMAIN = 'http://localhost:4000';
+// const DOMAIN = process.env.REACT_APP_API_URL;
+// alert(DOMAIN);
 const API_DOMAIN = `${DOMAIN}/api/v1`;
 
 const authorization = (accessToken: string) => {
@@ -61,6 +61,7 @@ const POST_COMMENT_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/
 const PATCH_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}`;
 const PUT_FAVORITE_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}/favorite`;
 const DELETE_BOARD_URL = (boardNumber: number | string) => `${API_DOMAIN}/board/${boardNumber}`;
+const DELETE_COMMENT_URL = (commentNumber: string | number) => `${API_DOMAIN}/board/comment/${commentNumber}`;
 
 export const getBoardRequest = async (boardNumber: number | string) => {
     const result = await axios.get(GET_BOARD_URL(boardNumber))
@@ -243,6 +244,21 @@ export const deleteBoardRequest = async (boardNumber: number | string, accessTok
         });
         return result;
 }
+
+// 댓글 삭제 요청 함수
+export const deleteCommentRequest = async (commentNumber: string | number, accessToken: string) => {
+    const result = await axios.delete(DELETE_COMMENT_URL(commentNumber), authorization(accessToken))
+        .then(response => {
+            const responseBody: DeleteCommentResponseDto = response.data; // ✨ 이렇게 ResponseDto 타입만 사용합니다.
+            return responseBody;
+        })
+        .catch(error => {
+            if (!error.response.data) return null;
+            const responseBody: ResponseDto = error.response.data;
+            return responseBody;
+        });
+    return result;
+};
 
 const GET_POPULAR_LIST_URL = () => `${API_DOMAIN}/search/popular-list`;
 const GET_RELATION_LIST_URL = (searchWord: string) => `${API_DOMAIN}/search/${searchWord}/relation-list`;
