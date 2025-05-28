@@ -1,7 +1,7 @@
 package com.capstone.board_back.repository;
 
 import com.capstone.board_back.entity.CommentEntity;
-import com.capstone.board_back.repository.resultSet.GetCommnetListResultSet;
+import com.capstone.board_back.repository.resultSet.GetCommentListResultSet;
 import jakarta.transaction.Transactional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -29,7 +29,7 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
                 nativeQuery = true
 
     )
-    List<GetCommnetListResultSet> getCommentList(Integer boardNumber);
+    List<GetCommentListResultSet> getCommentList(Integer boardNumber);
 
     @Transactional
     void deleteByBoardNumber(Integer boardNumber);

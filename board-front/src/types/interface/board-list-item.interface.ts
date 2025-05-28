@@ -9,4 +9,5 @@ export default interface BoardListItem {
     writeDatetime: string;
     writerNickname: string;
     writerProfileImage: string | null;
+    imageCount: number;
 }

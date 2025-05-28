@@ -8,7 +8,7 @@ import com.capstone.board_back.dto.response.board.*;
 import com.capstone.board_back.entity.*;
 import com.capstone.board_back.repository.*;
 import com.capstone.board_back.repository.resultSet.GetBoardResultSet;
-import com.capstone.board_back.repository.resultSet.GetCommnetListResultSet;
+import com.capstone.board_back.repository.resultSet.GetCommentListResultSet;
 import com.capstone.board_back.repository.resultSet.GetFavoriteListResultSet;
 import com.capstone.board_back.service.BoardService;
 import jakarta.transaction.Transactional;
@@ -25,26 +25,24 @@ import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-public class BoardServiceImplement implements BoardService {
+public class BoardServiceImplement implements BoardService{
 
     private final UserRepository userRepository;
     private final BoardRepository boardRepository;
     private final ImageRepository imageRepository;
     private final CommentRepository commentRepository;
     private final FavoriteRepository favoriteRepository;
-    private final SearchLogRepository searchLogRepository;
     private final BoardListViewRepository boardListViewRepository;
+    private final SearchLogRepository searchLogRepository;
 
     @Override
     public ResponseEntity<? super GetBoardResponseDto> getBoard(Integer boardNumber) {
-
         GetBoardResultSet resultSet = null;
         List<ImageEntity> imageEntities = new ArrayList<>();
 
         try {
-
             resultSet = boardRepository.getBoard(boardNumber);
-            if (resultSet == null) return GetBoardResponseDto.notExistBoard();
+            if(resultSet == null) return GetBoardResponseDto.notExistBoard();
 
             imageEntities = imageRepository.findByBoardNumber(boardNumber);
 
@@ -52,107 +50,138 @@ public class BoardServiceImplement implements BoardService {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
-        return GetBoardResponseDto.success(resultSet, imageEntities);
-
+        return GetBoardResponseDto.success(resultSet,imageEntities);
     }
 
     @Override
     public ResponseEntity<? super GetFavoriteListResponseDto> getFavoriteList(Integer boardNumber) {
 
         List<GetFavoriteListResultSet> resultSets = new ArrayList<>();
-
         try {
-
             boolean existedBoard = boardRepository.existsByBoardNumber(boardNumber);
-            if (!existedBoard) return GetFavoriteListResponseDto.notExistBoard();
+            if(!existedBoard) return GetFavoriteListResponseDto.notExistBoard();
 
             resultSets = favoriteRepository.getFavoriteList(boardNumber);
-
 
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return GetFavoriteListResponseDto.success(resultSets);
-
     }
 
     @Override
     public ResponseEntity<? super GetCommentListResponseDto> getCommentList(Integer boardNumber) {
 
-        List<GetCommnetListResultSet> resultSets = new ArrayList<>();
+        List<GetCommentListResultSet> resultSets = new ArrayList<>();
 
         try {
 
             boolean existedBoard = boardRepository.existsByBoardNumber(boardNumber);
-            if (!existedBoard) return GetCommentListResponseDto.notExistBoard();
+            if(!existedBoard) return GetCommentListResponseDto.notExistBoard();
 
             resultSets = commentRepository.getCommentList(boardNumber);
 
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
+            // TODO: handle exception
         }
-
         return GetCommentListResponseDto.success(resultSets);
-
     }
 
+    // @Override
+    // public ResponseEntity<? super GetLatestBoardListResponseDto> getLatestBoardList() {
+
+    //     List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+    //     try {
+    //         boardListViewEntities = boardListViewRepository.findByOrderByWriteDatetimeDesc();
+    //     } catch (Exception exception) {
+    //         exception.printStackTrace();
+    //         return ResponseDto.databaseError();
+    //     }
+    //     return GetLatestBoardListResponseDto.success(boardListViewEntities);
+    // }
     @Override
     public ResponseEntity<? super GetLatestBoardListResponseDto> getLatestBoardList() {
 
-        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+        List<BoardListItemResponseDto> boardListItemResponseDtos = new ArrayList<>(); // ✨ 변경: 반환할 DTO 리스트
 
         try {
+            List<BoardListViewEntity> boardListViewEntities = boardListViewRepository.findByOrderByWriteDatetimeDesc();
 
-            boardListViewEntities = boardListViewRepository.findByOrderByWriteDatetimeDesc();
+            // ✨ 각 BoardListViewEntity에 대해 imageCount를 조회하고 BoardListItemResponseDto로 변환
+            for (BoardListViewEntity boardListViewEntity : boardListViewEntities) {
+                int boardNumber = boardListViewEntity.getBoardNumber();
+                long imageCount = imageRepository.countByBoardNumber(boardNumber); // ImageRepository의 메소드 사용
+
+                BoardListItemResponseDto boardListItemResponseDto = new BoardListItemResponseDto(boardListViewEntity, (int) imageCount);
+                boardListItemResponseDtos.add(boardListItemResponseDto);
+            }
 
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
-        return GetLatestBoardListResponseDto.success(boardListViewEntities);
+        // ✨ GetLatestBoardListResponseDto.success() 메소드가 List<BoardListItemResponseDto>를 받을 수 있도록
+        // GetLatestBoardListResponseDto 클래스 내부도 수정 필요
+        return GetLatestBoardListResponseDto.success(boardListItemResponseDtos);
     }
 
-    @Override
-    public ResponseEntity<? super GetTop3BoardListResponseDto> getTop3BoardList() {
+    // @Override
+    // public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(String searchWord,
+    //         String preSearchWord) {
 
-        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+    //     List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+    //     try {
+
+    //         boardListViewEntities = boardListViewRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrderByWriteDatetimeDesc(searchWord, searchWord);
+
+    //         SearchLogEntity searchLogEntity = new SearchLogEntity(searchWord, preSearchWord, false);
+    //         searchLogRepository.save(searchLogEntity);
+
+    //         boolean relation = preSearchWord != null;
+    //         if(relation) {
+    //             searchLogEntity = new SearchLogEntity(preSearchWord, searchWord, true);
+    //             searchLogRepository.save(searchLogEntity);
+    //         }
+
+    //     } catch (Exception exception) {
+    //         exception.printStackTrace();
+    //         return ResponseDto.databaseError();
+    //     }
+    //     return GetSearchBoardListResponseDto.success(boardListViewEntities);
+    // }
+    @Override
+    public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(String searchWord,
+                                                                                    String preSearchWord) {
+
+        // List<BoardListViewEntity> boardListViewEntities = new ArrayList<>(); // ✨ 기존 코드 주석 또는 삭제
+        List<BoardListItemResponseDto> boardListItemResponseDtos = new ArrayList<>(); // ✨ 변경: 반환할 DTO 리스트
 
         try {
+            List<BoardListViewEntity> boardListViewEntities =
+                    boardListViewRepository.findByTitleContainingIgnoreCaseOrContentContainingIgnoreCaseOrderByWriteDatetimeDesc(searchWord, searchWord);
 
-            Date beforeWeek = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
-            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-            String beforeWeekStr = dateFormat.format(beforeWeek);
+            // ✨ 각 BoardListViewEntity에 대해 imageCount를 조회하고 BoardListItemResponseDto로 변환
+            for (BoardListViewEntity boardListViewEntity : boardListViewEntities) {
+                int boardNumber = boardListViewEntity.getBoardNumber();
+                long imageCount = imageRepository.countByBoardNumber(boardNumber);
 
-            boardListViewEntities = boardListViewRepository.findTop3ByWriteDatetimeGreaterThanOrderByFavoriteCountDescCommentCountDescViewCountDescWriteDatetimeDesc(beforeWeekStr);
+                BoardListItemResponseDto boardListItemResponseDto = new BoardListItemResponseDto(boardListViewEntity, (int) imageCount);
+                boardListItemResponseDtos.add(boardListItemResponseDto);
+            }
 
-        } catch (Exception exception) {
-            exception.printStackTrace();
-            return ResponseDto.databaseError();
-        }
-
-        return GetTop3BoardListResponseDto.success(boardListViewEntities);
-    }
-
-    @Override
-    public ResponseEntity<? super GetSearchBoardListResponseDto> getSearchBoardList(String searchWord, String preSearchWord) {
-
-        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
-
-        try {
-
-            boardListViewEntities = boardListViewRepository.findByTitleContainsOrContentContainsOrderByWriteDatetimeDesc(searchWord, searchWord);
-
+            // 검색 로그 저장 로직은 그대로 유지
             SearchLogEntity searchLogEntity = new SearchLogEntity(searchWord, preSearchWord, false);
             searchLogRepository.save(searchLogEntity);
 
             boolean relation = preSearchWord != null;
-            if (relation) {
-                searchLogEntity = new SearchLogEntity(preSearchWord, searchWord, relation);
+            if(relation) {
+                searchLogEntity = new SearchLogEntity(preSearchWord, searchWord, true);
                 searchLogRepository.save(searchLogEntity);
             }
 
@@ -160,100 +189,174 @@ public class BoardServiceImplement implements BoardService {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
-        return GetSearchBoardListResponseDto.success(boardListViewEntities);
-
+        // ✨ GetSearchBoardListResponseDto.success() 메소드가 List<BoardListItemResponseDto>를 받을 수 있도록
+        // GetSearchBoardListResponseDto 클래스 내부도 수정 필요
+        return GetSearchBoardListResponseDto.success(boardListItemResponseDtos);
     }
 
+    // @Override
+    // public ResponseEntity<? super GetUserBoardListResponseDto> getUserBoardList(String email) {
+
+    //     List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+    //     try {
+
+    //         boolean existedUser = userRepository.existsByEmail(email);
+    //         if(!existedUser) return GetUserBoardListResponseDto.notExistUser();
+
+    //         boardListViewEntities = boardListViewRepository.findByWriterEmailOrderByWriteDatetimeDesc(email);
+
+    //     } catch (Exception exception) {
+    //         exception.printStackTrace();
+    //         return ResponseDto.databaseError();
+    //     }
+    //     return GetUserBoardListResponseDto.success(boardListViewEntities);
+    // }
     @Override
     public ResponseEntity<? super GetUserBoardListResponseDto> getUserBoardList(String email) {
 
-        List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+        // List<BoardListViewEntity> boardListViewEntities = new ArrayList<>(); // ✨ 기존 코드 주석 또는 삭제
+        List<BoardListItemResponseDto> boardListItemResponseDtos = new ArrayList<>(); // ✨ 변경: 반환할 DTO 리스트
 
         try {
-
             boolean existedUser = userRepository.existsByEmail(email);
-            if (!existedUser) return GetUserBoardListResponseDto.notExistUser();
+            if(!existedUser) return GetUserBoardListResponseDto.notExistUser();
 
-            boardListViewEntities = boardListViewRepository.findByWriterEmailOrderByWriteDatetimeDesc(email);
+            List<BoardListViewEntity> boardListViewEntities =
+                    boardListViewRepository.findByWriterEmailOrderByWriteDatetimeDesc(email);
+
+            // ✨ 각 BoardListViewEntity에 대해 imageCount를 조회하고 BoardListItemResponseDto로 변환
+            for (BoardListViewEntity boardListViewEntity : boardListViewEntities) {
+                int boardNumber = boardListViewEntity.getBoardNumber();
+                long imageCount = imageRepository.countByBoardNumber(boardNumber);
+
+                BoardListItemResponseDto boardListItemResponseDto = new BoardListItemResponseDto(boardListViewEntity, (int) imageCount);
+                boardListItemResponseDtos.add(boardListItemResponseDto);
+            }
 
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-        return GetUserBoardListResponseDto.success(boardListViewEntities);
+        // ✨ GetUserBoardListResponseDto.success() 메소드가 List<BoardListItemResponseDto>를 받을 수 있도록
+        // GetUserBoardListResponseDto 클래스 내부도 수정 필요
+        return GetUserBoardListResponseDto.success(boardListItemResponseDtos);
+    }
+
+    // @Override
+    // public ResponseEntity<? super GetTop3BoardListResponseDto> getTop3BoardList() {
+
+    //     List<BoardListViewEntity> boardListViewEntities = new ArrayList<>();
+
+    //     try {
+    //         Date beforeWeek = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
+    //         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+    //         String sevenDaysAgo = simpleDateFormat.format(beforeWeek);
+    //         boardListViewEntities = boardListViewRepository.findTop3ByWriteDatetimeGreaterThanOrderByFavoriteCountDescCommentCountDescViewCountDescWriteDatetimeDesc(sevenDaysAgo);
+    //     } catch (Exception exception) {
+    //         exception.printStackTrace();
+    //         return ResponseDto.databaseError();
+    //     }
+    //     return GetTop3BoardListResponseDto.success(boardListViewEntities);
+    // }
+    @Override
+    public ResponseEntity<? super GetTop3BoardListResponseDto> getTop3BoardList() {
+
+        // List<BoardListViewEntity> boardListViewEntities = new ArrayList<>(); // ✨ 기존 코드 주석 또는 삭제
+        List<BoardListItemResponseDto> boardListItemResponseDtos = new ArrayList<>(); // ✨ 변경: 반환할 DTO 리스트
+
+        try {
+            Date beforeWeek = Date.from(Instant.now().minus(7, ChronoUnit.DAYS));
+            SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String sevenDaysAgo = simpleDateFormat.format(beforeWeek);
+
+            List<BoardListViewEntity> boardListViewEntities =
+                    boardListViewRepository.findTop3ByWriteDatetimeGreaterThanOrderByFavoriteCountDescCommentCountDescViewCountDescWriteDatetimeDesc(sevenDaysAgo);
+
+            // ✨ 각 BoardListViewEntity에 대해 imageCount를 조회하고 BoardListItemResponseDto로 변환
+            for (BoardListViewEntity boardListViewEntity : boardListViewEntities) {
+                int boardNumber = boardListViewEntity.getBoardNumber();
+                long imageCount = imageRepository.countByBoardNumber(boardNumber);
+
+                BoardListItemResponseDto boardListItemResponseDto = new BoardListItemResponseDto(boardListViewEntity, (int) imageCount);
+                boardListItemResponseDtos.add(boardListItemResponseDto);
+            }
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+        // ✨ GetTop3BoardListResponseDto.success() 메소드가 List<BoardListItemResponseDto>를 받을 수 있도록
+        // GetTop3BoardListResponseDto 클래스 내부도 수정 필요
+        return GetTop3BoardListResponseDto.success(boardListItemResponseDtos);
     }
 
     @Override
     public ResponseEntity<? super PostBoardResponseDto> postBoard(PostBoardRequestDto dto, String email) {
-
         try {
 
             boolean existedEmail = userRepository.existsByEmail(email);
-            if (!existedEmail) return PostBoardResponseDto.notExistUser();
+            if(!existedEmail) return PostBoardResponseDto.notExistUser();
 
             BoardEntity boardEntity = new BoardEntity(dto, email);
             boardRepository.save(boardEntity);
 
             int boardNumber = boardEntity.getBoardNumber();
+
             List<String> boardImageList = dto.getBoardImageList();
             List<ImageEntity> imageEntities = new ArrayList<>();
 
-            for (String image: boardImageList) {
+            for(String image: boardImageList) {
                 ImageEntity imageEntity = new ImageEntity(boardNumber, image);
                 imageEntities.add(imageEntity);
             }
+
             imageRepository.saveAll(imageEntities);
+
+
+
 
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return PostBoardResponseDto.success();
-
     }
 
     @Override
     public ResponseEntity<? super PostCommentResponseDto> postComment(PostCommentRequestDto dto, Integer boardNumber, String email) {
-
         try {
 
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return PostCommentResponseDto.notExistBoard();
+            if(boardEntity == null) return PostCommentResponseDto.notExistBoard();
 
             boolean existedUser = userRepository.existsByEmail(email);
-            if (!existedUser) return PostCommentResponseDto.notExistUser();
+            if(!existedUser) return PostBoardResponseDto.notExistUser();
 
-            CommentEntity commentEntity = new CommentEntity(dto, boardNumber, email);
+            CommentEntity commentEntity = new CommentEntity(dto,boardNumber,email);
             commentRepository.save(commentEntity);
 
             boardEntity.increaseCommentCount();
             boardRepository.save(boardEntity);
 
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return PostCommentResponseDto.success();
-
     }
 
     @Override
     public ResponseEntity<? super PutFavoriteResponseDto> putFavorite(Integer boardNumber, String email) {
-
         try {
 
             boolean existedUser = userRepository.existsByEmail(email);
-            if (!existedUser) return PutFavoriteResponseDto.notExistUser();
+            if(!existedUser) return PutFavoriteResponseDto.notExistUser();
 
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return PutFavoriteResponseDto.notExistBoard();
+            if(boardEntity == null) return PutFavoriteResponseDto.notExistBoard();
 
             FavoriteEntity favoriteEntity = favoriteRepository.findByBoardNumberAndUserEmail(boardNumber, email);
-            if (favoriteEntity == null) {
+            if(favoriteEntity == null) {
                 favoriteEntity = new FavoriteEntity(email, boardNumber);
                 favoriteRepository.save(favoriteEntity);
                 boardEntity.increaseFavoriteCount();
@@ -265,28 +368,28 @@ public class BoardServiceImplement implements BoardService {
 
             boardRepository.save(boardEntity);
 
+
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return PutFavoriteResponseDto.success();
-
     }
 
-    @Override
-    public ResponseEntity<? super PatchBoardResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardNumber, String email) {
-        try {
 
+    @Override
+    public ResponseEntity<? super PatchBoardResponseDto> patchBoard(PatchBoardRequestDto dto, Integer boardNumber,
+                                                                    String email) {
+        try {
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return PatchBoardResponseDto.NotExistBoard();
+            if(boardEntity == null) return PatchBoardResponseDto.notExistBoard();
 
             boolean existedUser = userRepository.existsByEmail(email);
-            if (!existedUser) return PatchBoardResponseDto.NotExistUser();
+            if(!existedUser) return PatchBoardResponseDto.notExistUser();
 
             String writerEmail = boardEntity.getWriterEmail();
             boolean isWriter = writerEmail.equals(email);
-            if (!isWriter) return PatchBoardResponseDto.NotPermission();
+            if(!isWriter) return PatchBoardResponseDto.notPermission();
 
             boardEntity.patchBoard(dto);
             boardRepository.save(boardEntity);
@@ -295,7 +398,7 @@ public class BoardServiceImplement implements BoardService {
             List<String> boardImageList = dto.getBoardImageList();
             List<ImageEntity> imageEntities = new ArrayList<>();
 
-            for (String image: boardImageList) {
+            for(String image: boardImageList){
                 ImageEntity imageEntity = new ImageEntity(boardNumber, image);
                 imageEntities.add(imageEntity);
             }
@@ -311,53 +414,45 @@ public class BoardServiceImplement implements BoardService {
 
     @Override
     public ResponseEntity<? super IncreaseViewCountResponseDto> increaseViewCount(Integer boardNumber) {
-
         try {
-
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return IncreaseViewCountResponseDto.noExistBoard();
+            if(boardEntity == null) return IncreaseViewCountResponseDto.notExistBoard();
 
             boardEntity.increaseViewCount();
             boardRepository.save(boardEntity);
-
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return IncreaseViewCountResponseDto.success();
     }
 
     @Override
     public ResponseEntity<? super DeleteBoardResponseDto> deleteBoard(Integer boardNumber, String email) {
-
         try {
-
             boolean existedUser = userRepository.existsByEmail(email);
-            if (!existedUser) return DeleteBoardResponseDto.notExistUser();
+            if(!existedUser) return DeleteBoardResponseDto.notExistUser();
 
             BoardEntity boardEntity = boardRepository.findByBoardNumber(boardNumber);
-            if (boardEntity == null) return DeleteBoardResponseDto.notExistBoard();
+            if(boardEntity == null) return DeleteBoardResponseDto.notExistBoard();
 
             String writerEmail = boardEntity.getWriterEmail();
             boolean isWriter = writerEmail.equals(email);
-            if (!isWriter) return DeleteBoardResponseDto.notPermission();
+            if(!isWriter) return DeleteBoardResponseDto.notPermission();
 
             imageRepository.deleteByBoardNumber(boardNumber);
             commentRepository.deleteByBoardNumber(boardNumber);
             favoriteRepository.deleteByBoardNumber(boardNumber);
 
             boardRepository.delete(boardEntity);
-
         } catch (Exception exception) {
             exception.printStackTrace();
             return ResponseDto.databaseError();
         }
-
         return DeleteBoardResponseDto.success();
-
     }
 
+    // ✨ 댓글 삭제 로직 구현
     @Override
     @Transactional // 데이터 변경 작업이므로 트랜잭션 처리 권장
     public ResponseEntity<? super DeleteCommentResponseDto> deleteComment(Integer commentNumber, String email) {

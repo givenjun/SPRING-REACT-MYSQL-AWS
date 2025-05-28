@@ -35,6 +35,7 @@ public class BoardListItem {
         this.writeDatetime = boardListViewEntity.getWriteDatetime();
         this.writerNickname = boardListViewEntity.getWriterNickname();
         this.writerProfileImage = boardListViewEntity.getWriterProfileImage();
+
     }
 
     public static List<BoardListItem> getList(List<BoardListViewEntity> boardListViewEntities) {

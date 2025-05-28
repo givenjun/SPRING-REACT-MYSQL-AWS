@@ -3,35 +3,36 @@ package com.capstone.board_back.dto.response.board;
 import com.capstone.board_back.common.ResponseCode;
 import com.capstone.board_back.common.ResponseMessage;
 import com.capstone.board_back.dto.response.ResponseDto;
+import com.capstone.board_back.entity.BoardListViewEntity;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 @Getter
-public class DeleteBoardResponseDto extends ResponseDto {
+public class BoardListItemResponseDto{
+    private int boardNumber;
+    private String title;
+    // private String content; // 목록에서는 보통 내용을 다 보여주지 않으므로 필요에 따라 포함/제외
+    private String boardTitleImage; // BoardListViewEntity의 titleImage 필드 사용
+    private int favoriteCount;
+    private int commentCount;
+    private int viewCount;
+    private String writeDatetime;
+    private String writerNickname;
+    private String writerProfileImage;
+    private int imageCount; // ✨ 이미지 개수 필드 썸네일에 이미지 몇개더 있는지 알려주는 기능
 
-    private DeleteBoardResponseDto() {
-        super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
+    // 생성자
+    public BoardListItemResponseDto(BoardListViewEntity boardListViewEntity, int imageCount) {
+        this.boardNumber = boardListViewEntity.getBoardNumber();
+        this.title = boardListViewEntity.getTitle();
+        this.boardTitleImage = boardListViewEntity.getTitleImage();
+        this.favoriteCount = boardListViewEntity.getFavoriteCount();
+        this.commentCount = boardListViewEntity.getCommentCount();
+        this.viewCount = boardListViewEntity.getViewCount();
+        this.writeDatetime = boardListViewEntity.getWriteDatetime();
+        this.writerNickname = boardListViewEntity.getWriterNickname();
+        this.writerProfileImage = boardListViewEntity.getWriterProfileImage();
+        this.imageCount = imageCount;//썸네일에 이미지 몇개더 있는지 알려주는 기능
     }
-
-    public static ResponseEntity<DeleteBoardResponseDto> success() {
-        DeleteBoardResponseDto result = new DeleteBoardResponseDto();
-        return ResponseEntity.status(HttpStatus.OK).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> notExistBoard() {
-        ResponseDto result = new ResponseDto(ResponseCode.NOT_EXISTED_BOARD, ResponseMessage.NOT_EXISTED_BOARD);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> notExistUser() {
-        ResponseDto result = new ResponseDto(ResponseCode.NOT_EXISTED_USER, ResponseMessage.NOT_EXISTED_USER);
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(result);
-    }
-
-    public static ResponseEntity<ResponseDto> notPermission() {
-        ResponseDto result = new ResponseDto(ResponseCode.NO_PERMISSION, ResponseMessage.NO_PERMISSION);
-        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(result);
-    }
-
 }

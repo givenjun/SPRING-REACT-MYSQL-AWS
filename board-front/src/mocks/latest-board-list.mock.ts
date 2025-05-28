@@ -12,6 +12,7 @@ const latestBoardListMock: BoardListItem[] = [
         "writeDatetime": "2023.08.18. 00:54:27",
         "writerNickname": "안녕하세요나는주코야키",
         "writerProfileImage": 'https://cdn.pixabay.com/photo/2020/05/17/20/21/cat-5183427_1280.jpg',
+        "imageCount": "boardTitleImage".length
     },
     {
         "boardNumber": 2,
@@ -24,6 +25,7 @@ const latestBoardListMock: BoardListItem[] = [
         "writeDatetime": "2023.08.18. 00:54:27",
         "writerNickname": "안녕하세요나는주코야키",
         "writerProfileImage": null,
+        "imageCount": "boardTitleImage".length
     },
     {
         "boardNumber": 3,
@@ -36,6 +38,7 @@ const latestBoardListMock: BoardListItem[] = [
         "writeDatetime": "2023.08.18. 00:54:27",
         "writerNickname": "안녕하세요나는주코야키",
         "writerProfileImage": null,
+        "imageCount": "boardTitleImage".length
     },
     {
         "boardNumber": 4,
@@ -48,6 +51,7 @@ const latestBoardListMock: BoardListItem[] = [
         "writeDatetime": "2023.08.18. 00:54:27",
         "writerNickname": "안녕하세요나는주코야키",
         "writerProfileImage": null,
+        "imageCount": "boardTitleImage".length
     },
 ];
 

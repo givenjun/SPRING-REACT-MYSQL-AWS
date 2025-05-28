@@ -1,6 +1,6 @@
 package com.capstone.board_back.dto.object;
 
-import com.capstone.board_back.repository.resultSet.GetCommnetListResultSet;
+import com.capstone.board_back.repository.resultSet.GetCommentListResultSet;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +20,7 @@ public class CommentListItem {
     private String content;
     private String userEmail;       // ✨ 필드 추가
 
-    public CommentListItem(GetCommnetListResultSet resultSet) {
+    public CommentListItem(GetCommentListResultSet resultSet) {
         this.commentNumber = resultSet.getCommentNumber();    // ✨ 매핑 추가
         this.nickname = resultSet.getNickname();
         this.profileImage = resultSet.getProfileImage();
@@ -29,9 +29,9 @@ public class CommentListItem {
         this.userEmail = resultSet.getUserEmail();        // ✨ 매핑 추가
     }
 
-    public static List<CommentListItem> copyList(List<GetCommnetListResultSet> resultSets) {
+    public static List<CommentListItem> copyList(List<GetCommentListResultSet> resultSets) {
         List<CommentListItem> list = new ArrayList<>();
-        for (GetCommnetListResultSet resultSet : resultSets) {
+        for (GetCommentListResultSet resultSet : resultSets) {
             CommentListItem correspondingItem = new CommentListItem(resultSet);
             list.add(correspondingItem);
         }
