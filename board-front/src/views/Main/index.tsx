@@ -88,7 +88,7 @@ export default function Main() {
     return(
       <div id='main-top-wrapper'>
         <div className='main-top-container'>
-          <div className='main-top-title'>{'길찾기'}</div>
+          {/* <div className='main-top-title'>{'길찾기'}</div> */}
           {/* ✨ 여기에 카카오맵을 표시할 div 추가 */}
           <div ref={mapContainerRef} id="kakao-map-container" className='kakao-map-container'>
               {/* 지도는 여기에 그려집니다. */}

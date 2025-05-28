@@ -3,6 +3,8 @@
 
     display: flex;
     justify-content: center;
+
+    background-color: rgba(55, 55, 55, 0.25);
 }
 
 .header-container {
