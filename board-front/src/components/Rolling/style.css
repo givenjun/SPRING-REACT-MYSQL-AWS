@@ -1,0 +1,14 @@
+ .num {
+        display: inline-block;
+        width: 10px;
+        height: 30px;
+        overflow: hidden;
+        text-align: center;
+    }
+    .num-list {
+        display: inline-block;
+        width: 10px;
+        line-height: 30px;
+        margin-top:0;
+        text-align: center;
+    }

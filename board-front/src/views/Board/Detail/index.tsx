@@ -16,6 +16,7 @@ import dayjs from 'dayjs';
 import { useCookies } from 'react-cookie';
 import { PostCommentRequestDto } from 'apis/request/board';
 import { customErrToast, usePagination } from 'hooks';
+import RollingNumber from 'components/Rolling/RollingNumber';
 
 
   
@@ -400,7 +401,12 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
                       <div className={`icon favorite-light-icon ${animate ? 'pop' : ''}`}></div>
                     }
                 </div>
-                <div className='board-detail-bottom-button-text'>{`좋아요 ${favoriteList.length}`}</div>
+                <div className='board-detail-bottom-button-text'>{`좋아요`}</div>
+                <RollingNumber
+                  value={favoriteList.length}
+                  type='slide'
+                  className='board-detail-bottom-button-text'></RollingNumber>
+                
                 <div className='icon-button' onClick={onShowFavoriteClickHandler}>
                     {showFavorite ?
                         <div className='icon up-light-icon'></div> :
@@ -414,7 +420,12 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
                 <div className='icon-button'>
                     <div className='icon comment-fill-icon'></div>
                 </div>
-                <div className='board-detail-bottom-button-text'>{`댓글 ${totalCommentCount}`}</div>
+                <div className='board-detail-bottom-button-text'>{`댓글`}</div>
+                <RollingNumber
+                  value={totalCommentCount}
+                  type='slide'
+                  className='board-detail-bottom-button-text'
+                />
                 {/* 댓글 펼치기/접기 아이콘 버튼 */}
                 <div className='icon-button' onClick={onShowCommentClickHandler}>
                     {showComment ? 
