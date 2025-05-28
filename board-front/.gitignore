@@ -22,3 +22,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# cache & lint build artifacts
+.eslintcache
+tsconfig.tsbuildinfo
+
+# IDE/editor-specific
+.idea/
+.vscode/
+
+# TypeScript, Webpack, Vite, Babel 등에서 생성되는 캐시
+/node_modules
