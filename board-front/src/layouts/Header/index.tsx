@@ -1,7 +1,7 @@
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react'
 import './style.css'
 import { useLocation, useNavigate, useParams } from 'react-router-dom'
-import { AUTH_PATH, BOARD_DETAIL_PATH, BOARD_PATH, BOARD_UPDATE_PATH, BOARD_WRITE_PATH, MAIN_PATH, SEARCH_PATH, USER_PATH } from 'constant';
+import { AUTH_PATH, BOARD_DETAIL_PATH, BOARD_PATH, BOARD_UPDATE_PATH, BOARD_WRITE_PATH, MAIN_PATH, NOTICE_PATH, SEARCH_PATH, USER_PATH } from 'constant';
 import { useCookies } from 'react-cookie';
 import { useLoginUserStore } from 'stores';
 import useBoardStore from 'stores/board.store';
@@ -46,13 +46,17 @@ export default function Header() {
   const onLogoClickHandler = () => {
     navigate(MAIN_PATH());
   };
-  //          event handler: 업로드 버튼 클릭 이벤트 처리 함수          //
+  //          event handler: 홈 클릭 이벤트 처리 함수          //
   const onMainClickHandler = () => {
     navigate(MAIN_PATH());
   };
-  //          event handler: 업로드 버튼 클릭 이벤트 처리 함수          //
+  //          event handler: 게시판 클릭 이벤트 처리 함수          //
   const onBoardClickHandler = () => {
     navigate(BOARD_PATH());
+  };
+  //          event handler: 공지사항항 클릭 이벤트 처리 함수          //
+  const onNoticeClickHandler = () => {
+    navigate(NOTICE_PATH());
   };
 
   //          component: 검색 버튼 컴포넌트         //
@@ -259,7 +263,7 @@ export default function Header() {
         <div className='header-route-box'>
           <div className='header-route' onClick={onMainClickHandler}>{'   홈   '}</div>
           <div className='header-route' onClick={onBoardClickHandler}>{'커뮤니티'}</div>
-          <div className='header-route'>{'공지사항'}</div>
+          <div className='header-route' onClick={onNoticeClickHandler}>{'공지사항'}</div>
         </div>
         <div className='header-right-box'>
           {(isAuthPage || isMainPage || isSearchPage || isBoardDetailPage || isBoardPage && !isBoardWritePage && !isBoardUpdatePage) && <SearchButton />}

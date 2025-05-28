@@ -8,7 +8,7 @@ import BoardDetail from 'views/Board/Detail';
 import BoardWrite from 'views/Board/Write';
 import BoardUpdate from 'views/Board/Update';
 import Container from 'layouts/Container';
-import { MAIN_PATH, AUTH_PATH, SEARCH_PATH, USER_PATH, BOARD_PATH, BOARD_WRITE_PATH, BOARD_DETAIL_PATH, BOARD_UPDATE_PATH } from 'constant';
+import { MAIN_PATH, AUTH_PATH, SEARCH_PATH, USER_PATH, BOARD_PATH, BOARD_WRITE_PATH, BOARD_DETAIL_PATH, BOARD_UPDATE_PATH, NOTICE_PATH } from 'constant';
 import { useEffect } from 'react';
 import { useLoginUserStore } from 'stores';
 import { getSignInUserRequest } from 'apis';
@@ -17,6 +17,7 @@ import { ResponseDto } from 'apis/response';
 import { User } from 'types/interface';
 import { useCookies } from 'react-cookie';
 import Board from 'views/Board';
+import Notice from 'views/Notice';
 
 
 //          component: Application 컴포넌트         //
@@ -66,6 +67,7 @@ function App() {
         <Route path={BOARD_PATH() + '/' + BOARD_WRITE_PATH()} element={<BoardWrite />} />
         <Route path={BOARD_PATH() + '/' + BOARD_DETAIL_PATH(':boardNumber')} element={<BoardDetail />} />
         <Route path={BOARD_PATH() + '/' + BOARD_UPDATE_PATH(':boardNumber')} element={<BoardUpdate />} />
+        <Route path={NOTICE_PATH()} element={<Notice />} />
         <Route path='*' element={<h1>404 Not Found</h1>}></Route>
       </Route>
     </Routes>
