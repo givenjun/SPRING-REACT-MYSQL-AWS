@@ -1,7 +1,6 @@
 package com.capstone.board_back.entity;
 
 import com.capstone.board_back.dto.request.board.PostCommentRequestDto;
-import com.capstone.board_back.dto.response.board.PostCommentResponseDto;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -24,6 +23,7 @@ public class CommentEntity {
     private String writeDatetime;
     private String userEmail;
     private int boardNumber;
+    private int favoriteCount;
 
     public CommentEntity(PostCommentRequestDto dto, Integer boardNumber, String email) {
 
@@ -36,5 +36,12 @@ public class CommentEntity {
         this.userEmail = email;
         this.boardNumber = boardNumber;
     }
+    
+    public void increaseFavoriteCount() {
+        this.favoriteCount++;
+    }
 
+    public void decreaseFavoriteCount() {
+        this.favoriteCount--;
+    }
 }

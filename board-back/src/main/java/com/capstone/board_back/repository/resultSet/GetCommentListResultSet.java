@@ -8,5 +8,6 @@ public interface GetCommentListResultSet {
     String getProfileImage();
     String getWriteDatetime();
     String getContent();
+    Integer getFavoriteCount();
 
 }

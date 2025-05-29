@@ -56,3 +56,15 @@
         font-weight: 500;
         line-height: 150%;
 }
+
+.comment-list-item-bottom {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.comment-list-item-favorite-count {
+    color: rgba(0, 0, 0, 0.4);
+
+    font-size: 16px;
+}

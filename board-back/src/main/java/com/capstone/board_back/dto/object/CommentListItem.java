@@ -19,6 +19,7 @@ public class CommentListItem {
     private String writeDatetime;
     private String content;
     private String userEmail;       // ✨ 필드 추가
+    private int favoriteCount;
 
     public CommentListItem(GetCommentListResultSet resultSet) {
         this.commentNumber = resultSet.getCommentNumber();    // ✨ 매핑 추가
@@ -27,6 +28,7 @@ public class CommentListItem {
         this.writeDatetime = resultSet.getWriteDatetime();
         this.content = resultSet.getContent();
         this.userEmail = resultSet.getUserEmail();        // ✨ 매핑 추가
+        this.favoriteCount = resultSet.getFavoriteCount();
     }
 
     public static List<CommentListItem> copyList(List<GetCommentListResultSet> resultSets) {

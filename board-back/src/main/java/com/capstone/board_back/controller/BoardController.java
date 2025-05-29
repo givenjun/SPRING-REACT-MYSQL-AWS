@@ -99,6 +99,24 @@ public class BoardController {
         return response;
     }
 
+
+    @GetMapping("/comment/{commentNumber}/favorite-list")
+    public ResponseEntity<? super GetCommentFavoriteListResponseDto> getCommentFavoriteList(
+        @PathVariable("commentNumber") Integer commentNumber
+    ) {
+        ResponseEntity<? super GetCommentFavoriteListResponseDto> response = boardService.getCommentFavoriteList(commentNumber);
+        return response;
+    }
+    
+    @PutMapping("/comment/{commentNumber}/favorite")
+    public ResponseEntity<? super PutCommentFavoriteResponseDto> putCommentFavorite(
+        @PathVariable("commentNumber") Integer commentNumber,
+        @AuthenticationPrincipal String email
+    ) {
+        ResponseEntity<? super PutCommentFavoriteResponseDto> response = boardService.putCommentFavorite(commentNumber, email);
+        return response;
+    }
+
     @PutMapping("/{boardNumber}/favorite")
     public ResponseEntity<? super PutFavoriteResponseDto> putFavorite(
             @PathVariable("boardNumber") Integer boardNumber,
@@ -136,4 +154,5 @@ public class BoardController {
         ResponseEntity<? super DeleteCommentResponseDto> response = boardService.deleteComment(commentNumber, email);
         return response;
     }
+    
 }
