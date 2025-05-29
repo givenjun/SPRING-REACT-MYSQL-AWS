@@ -8,6 +8,7 @@ import com.capstone.board_back.dto.response.board.*;
 import com.capstone.board_back.entity.*;
 import com.capstone.board_back.repository.*;
 import com.capstone.board_back.repository.resultSet.GetBoardResultSet;
+import com.capstone.board_back.repository.resultSet.GetCommentFavoriteListResultSet;
 import com.capstone.board_back.repository.resultSet.GetCommentListResultSet;
 import com.capstone.board_back.repository.resultSet.GetFavoriteListResultSet;
 import com.capstone.board_back.service.BoardService;
@@ -31,6 +32,7 @@ public class BoardServiceImplement implements BoardService{
     private final BoardRepository boardRepository;
     private final ImageRepository imageRepository;
     private final CommentRepository commentRepository;
+    private final CommentFavoriteRepository commentFavoriteRepository;
     private final FavoriteRepository favoriteRepository;
     private final BoardListViewRepository boardListViewRepository;
     private final SearchLogRepository searchLogRepository;
@@ -51,6 +53,26 @@ public class BoardServiceImplement implements BoardService{
             return ResponseDto.databaseError();
         }
         return GetBoardResponseDto.success(resultSet,imageEntities);
+    }
+
+    @Override
+    public ResponseEntity<? super GetCommentFavoriteListResponseDto> getCommentFavoriteList(Integer commentNumber) {
+
+        List<GetCommentFavoriteListResultSet> resultSets = new ArrayList<>();
+
+        try {
+            
+            boolean existedBoard = commentRepository.existsByCommentNumber(commentNumber);
+            if (!existedBoard) return GetCommentFavoriteListResponseDto.noExistComment();
+
+            resultSets = commentFavoriteRepository.getCommentFavoriteList(commentNumber);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return GetCommentFavoriteListResponseDto.success(resultSets);
     }
 
     @Override
@@ -346,6 +368,39 @@ public class BoardServiceImplement implements BoardService{
     }
 
     @Override
+    public ResponseEntity<? super PutCommentFavoriteResponseDto> putCommentFavorite(Integer commentNumber, String email) {
+
+            try {
+
+            boolean existedUser = userRepository.existsByEmail(email);
+            if (!existedUser) return PutCommentFavoriteResponseDto.noExistUser();
+
+            CommentEntity commentEntity = commentRepository.findByCommentNumber(commentNumber);
+            if (commentEntity == null) return PutCommentFavoriteResponseDto.noExistComment();
+
+            CommentFavoriteEntity commentFavoriteEntity = commentFavoriteRepository.findByCommentNumberAndUserEmail(commentNumber, email);
+            if (commentFavoriteEntity == null) {
+                commentFavoriteEntity = new CommentFavoriteEntity(email, commentNumber);
+                commentFavoriteRepository.save(commentFavoriteEntity);
+                commentEntity.increaseFavoriteCount();
+            }
+            else {
+                commentFavoriteRepository.delete(commentFavoriteEntity);
+                commentEntity.decreaseFavoriteCount();
+            }
+
+            commentRepository.save(commentEntity);
+
+        } catch (Exception exception) {
+            exception.printStackTrace();
+            return ResponseDto.databaseError();
+        }
+
+        return PutCommentFavoriteResponseDto.success();
+
+    }
+
+    @Override
     public ResponseEntity<? super PutFavoriteResponseDto> putFavorite(Integer boardNumber, String email) {
         try {
 
@@ -471,6 +526,7 @@ public class BoardServiceImplement implements BoardService{
             if (!isWriter) return DeleteCommentResponseDto.notPermission(); // 또는 적절한 오류 응답
 
             // 4. 댓글 삭제
+            commentFavoriteRepository.deleteByCommentNumber(commentNumber);
             commentRepository.delete(commentEntity);
 
             // 5. 해당 게시물의 댓글 수 감소
@@ -488,4 +544,5 @@ public class BoardServiceImplement implements BoardService{
 
         return DeleteCommentResponseDto.success(); // 성공 응답
     }
+
 }
