@@ -14,6 +14,16 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
 
     CommentEntity findByCommentNumber(Integer commentNumber);
 
+    @Query(
+        value = "SELECT C.comment_number " +
+                "FROM board AS B " +
+                "INNER JOIN comment AS C ON B.board_number = C.board_number " +
+                "WHERE B.board_number = ?1",
+        nativeQuery = true
+    )
+    List<Integer> getCommentNumberList(Integer boardNumber);
+
+
     boolean existsByCommentNumber(Integer commentNumber);
     
     @Query(
@@ -35,6 +45,9 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
 
     )
     List<GetCommentListResultSet> getCommentList(Integer boardNumber);
+
+    // 댓글 삭제용 쿼리
+    
 
     @Transactional
     void deleteByBoardNumber(Integer boardNumber);

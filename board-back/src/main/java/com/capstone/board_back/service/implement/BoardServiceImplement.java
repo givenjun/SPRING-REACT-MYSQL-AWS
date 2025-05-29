@@ -495,6 +495,13 @@ public class BoardServiceImplement implements BoardService{
             boolean isWriter = writerEmail.equals(email);
             if(!isWriter) return DeleteBoardResponseDto.notPermission();
 
+            List<Integer> commentNumbers = commentRepository.getCommentNumberList(boardNumber);
+
+        // 댓글 좋아요 삭제
+            System.out.println(commentNumbers);
+            for (Integer commentNumber : commentNumbers) {
+                commentFavoriteRepository.deleteByCommentNumber(commentNumber);
+            }
             imageRepository.deleteByBoardNumber(boardNumber);
             commentRepository.deleteByBoardNumber(boardNumber);
             favoriteRepository.deleteByBoardNumber(boardNumber);
