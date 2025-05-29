@@ -1,8 +1,9 @@
 #board-top-wrapper {
-    padding: 80px 0 40px;
+    padding: 100px 0 40px;
 
     display: flex;
     justify-content: center;
+    background-color: #ffe8ff;
 }
 
 .board-top-container {
@@ -67,7 +68,7 @@
 
     display: flex;
     justify-content: center;
-    background-color: rgba(174, 0, 255, 0.05);
+    background-color: rgb(216, 184, 253);
 }
 
 .board-bottom-container {
