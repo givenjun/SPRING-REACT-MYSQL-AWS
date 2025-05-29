@@ -23,6 +23,7 @@ public class GetBoardResponseDto extends ResponseDto {
     private String writerEmail;
     private String writerNickname;
     private String writerProfileImage;
+    private int viewCount;
 
     private GetBoardResponseDto(GetBoardResultSet resultSet, List<ImageEntity> imageEntities) {
         super(ResponseCode.SUCCESS, ResponseMessage.SUCCESS);
@@ -41,6 +42,7 @@ public class GetBoardResponseDto extends ResponseDto {
         this.writerEmail = resultSet.getWriterEmail();
         this.writerNickname = resultSet.getWriterNickname();
         this.writerProfileImage = resultSet.getWriterProfileImage();
+        this.viewCount = resultSet.getViewCount();
     }
 
     public static ResponseEntity<GetBoardResponseDto> success(GetBoardResultSet resultSet, List<ImageEntity> imageEntities) {

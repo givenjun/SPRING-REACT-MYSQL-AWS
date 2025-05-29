@@ -8,7 +8,8 @@ const boardMock: Board = {
     writeDatetime: '2025-05-16',
     writerEmail: 'wjdwns0531@naver.com',
     writerNickname: '상추새벼기',
-    writerProfileImage: 'https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEwMTBfNiAg%2FMDAxNzI4NTY4MzkxOTc4.D2zV2OoisVHjQhh4ODE-Ec3JNfCSr_5tIhFBeY3zFUkg.omP7tIQLUKeR_6iS00Tl_nWN52akKw1ee3hdJ1Xhir8g.JPEG%2FDSC_4277.JPG&type=a340'
+    writerProfileImage: 'https://search.pstatic.net/common/?src=http%3A%2F%2Fblogfiles.naver.net%2FMjAyNDEwMTBfNiAg%2FMDAxNzI4NTY4MzkxOTc4.D2zV2OoisVHjQhh4ODE-Ec3JNfCSr_5tIhFBeY3zFUkg.omP7tIQLUKeR_6iS00Tl_nWN52akKw1ee3hdJ1Xhir8g.JPEG%2FDSC_4277.JPG&type=a340',
+    viewCount: 156
 }
 
 export default boardMock

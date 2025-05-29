@@ -15,11 +15,10 @@ import { ResponseDto } from 'apis/response';
 import dayjs from 'dayjs';
 import { useCookies } from 'react-cookie';
 import { PostCommentRequestDto } from 'apis/request/board';
-import { customErrToast, usePagination } from 'hooks';
+import { usePagination } from 'hooks';
 import RollingNumber from 'components/Rolling/RollingNumber';
-
-
-  
+import { toast } from 'react-toastify';
+import InitRollingNumber from 'components/Rolling/initRolling/InitRollingNumber';
 
 //         component: 게시물 상세 화면 컴포넌트      //
 export default function BoardDetail() {
@@ -30,25 +29,29 @@ export default function BoardDetail() {
   const {loginUser} = useLoginUserStore();
   //         state: 쿠키 상태      //
   const [cookies, setCookies] = useCookies();
+  //         state: 쿠키 상태      //
+  const [viewCount, setViewCount] = useState<number>(0);
+
+  const [initialRenderDone, setInitialRenderDone] = useState(false);
+  
   //          function: 네비게이트 함수          //import { Cookies, useCookies } from 'react-cookie';
   const navigate = useNavigate();
   //          function: increase view count response 처리 함수          //
   const increaseViewCountResponse = (responseBody: IncreaseViewCountResponseDto | ResponseDto | null) => {
     if(!responseBody) return;
     const {code} = responseBody;
-    if(code === 'NB') customErrToast('존재하지 않는 게시물입니다.');
-    if(code === 'DBE') customErrToast('데이터베이스 오류입니다.');
+    if(code === 'NB') toast('존재하지 않는 게시물입니다.');
+    if(code === 'DBE') toast('데이터베이스 오류입니다.');
   }
   //         component: 게시물 상세 상단 화면 컴포넌트      //
   const BoardDetailTop = () => {
 
   //         state: 작성자 여부 사애    //
   const [isWriter, setWriter] = useState<boolean>(false);
-  //         state: more 버튼 상태      //
+  //         state: board 상태      //
   const [board, setBoard] = useState<Board | null>(null);
   //         state: more 버튼 상태      //
   const [showMore, setShowMore] = useState<boolean>(false);
-  
   
   //          function: 작성일 포멧 변경 함수          //
   const getWriteDatetimeFormat = () => {
@@ -60,33 +63,36 @@ export default function BoardDetail() {
   const getBoardResponse = (responseBody: GetBoardResponseDto | ResponseDto | null) => {
     if(!responseBody) return;
     const {code} = responseBody;
-    if(code === 'NB') customErrToast('존재하지 않는 게시물입니다.');
-    if(code === 'DBE') customErrToast('데이터베이스 오류입니다.');
+    if(code === 'NB') toast('존재하지 않는 게시물입니다.');
+    if(code === 'DBE') toast('데이터베이스 오류입니다.');
     if(code !== 'SU') {
       navigate(MAIN_PATH());
       return;
     }
     const board: Board = {...responseBody as GetBoardResponseDto}
     setBoard(board);
+    setTimeout(() => {
+      setViewCount(board.viewCount);
+      setInitialRenderDone(true);
+    }, 200);
 
     if(!loginUser){
       setWriter(false);
       return;
     }
-    const isWriter=loginUser.email === board.writerEmail;
+    const isWriter = loginUser.email === board.writerEmail;
     setWriter(isWriter);
   }
-
   //          function: delete board response 처리 함수          //
   const deleteBoardResponse = (responseBody: DeleteBoardResponseDto | ResponseDto | null) => {
     if(!responseBody) return;
     const {code} = responseBody;
-    if(code ==='VF') customErrToast('잘못된 접근입니다.');
-    if(code ==='NU') customErrToast('존재하지 않는 유저입니다.');
-    if(code ==='NB') customErrToast('존재하지 않는 게시물입니다.');
-    if(code ==='AF') customErrToast('인증에 실패했습니다.');
-    if(code ==='NP') customErrToast('권환이 없습니다.');
-    if(code ==='DBE') customErrToast('데이터베이스 오류입니다.');
+    if(code ==='VF') toast('잘못된 접근입니다.');
+    if(code ==='NU') toast('존재하지 않는 유저입니다.');
+    if(code ==='NB') toast('존재하지 않는 게시물입니다.');
+    if(code ==='AF') toast('인증에 실패했습니다.');
+    if(code ==='NP') toast('권환이 없습니다.');
+    if(code ==='DBE') toast('데이터베이스 오류입니다.');
     if(code !=='SU') return;
     
     navigate(MAIN_PATH());
@@ -123,6 +129,8 @@ export default function BoardDetail() {
       return;
     }
     getBoardRequest(boardNumber).then(getBoardResponse);
+    console.log(1);
+    // toast("조회수 "+ viewCount);
   }, [boardNumber])
 
     //         render: 게시물 상세 상단 화면 컴포넌트 렌더링      //
@@ -162,7 +170,7 @@ export default function BoardDetail() {
   }
 
   //         component: 게시물 하단 화면 컴포넌트      //
-  const BoardDetailBottom = () => {
+  const BoardDetailBottom = ({ viewCount }: { viewCount: number }) => {
     //          state: 댓글 testarea 참조 상태          //
     const commentRef = useRef<HTMLTextAreaElement | null>(null);
     //          state: 좋아요 리스트 상태          //
@@ -202,11 +210,11 @@ export default function BoardDetail() {
     const handleDeleteComment = (commentNumber: number) => {
         // boardNumber는 BoardDetail 스코프의 useParams()로 가져온 값을 사용합니다.
         if (!boardNumber) {
-            customErrToast('게시물 번호가 유효하지 않습니다.');
+            toast('게시물 번호가 유효하지 않습니다.');
             return;
         }
         if (!cookies.accessToken) {
-            customErrToast('로그인이 필요합니다.');
+            toast('로그인이 필요합니다.');
             return;
         }
 
@@ -219,35 +227,35 @@ export default function BoardDetail() {
     // ✨ 댓글 삭제 API 응답 콜백 함수 추가
     const deleteCommentResponseCallback = (responseBody: ResponseDto | null) => { // 타입은 DeleteCommentResponseDto | ResponseDto | null
         if (!responseBody) {
-            customErrToast('네트워크 응답이 없거나 요청에 실패했습니다.');
+            toast('네트워크 응답이 없거나 요청에 실패했습니다.');
             return;
         }
         const { code } = responseBody;
 
-        if (code === 'VF') customErrToast('잘못된 접근입니다.');
-        else if (code === 'NU') customErrToast('존재하지 않는 유저입니다.'); // 이 오류는 보통 토큰의 사용자가 유효하지 않을 때
-        else if (code === 'NB') customErrToast('존재하지 않는 게시물입니다.');
-        else if (code === 'NC') customErrToast('존재하지 않는 댓글입니다.'); // 백엔드에서 정의한 응답 코드
-        else if (code === 'AF') customErrToast('인증에 실패했습니다.');
-        else if (code === 'NP') customErrToast('권한이 없습니다.');
-        else if (code === 'DBE') customErrToast('데이터베이스 오류입니다.');
+        if (code === 'VF') toast('잘못된 접근입니다.');
+        else if (code === 'NU') toast('존재하지 않는 유저입니다.'); // 이 오류는 보통 토큰의 사용자가 유효하지 않을 때
+        else if (code === 'NB') toast('존재하지 않는 게시물입니다.');
+        else if (code === 'NC') toast('존재하지 않는 댓글입니다.'); // 백엔드에서 정의한 응답 코드
+        else if (code === 'AF') toast('인증에 실패했습니다.');
+        else if (code === 'NP') toast('권한이 없습니다.');
+        else if (code === 'DBE') toast('데이터베이스 오류입니다.');
         else if (code === 'SU') {
-            customErrToast('댓글이 삭제되었습니다.');
+            toast('댓글이 삭제되었습니다.');
             // 댓글 목록을 다시 불러와서 UI를 갱신합니다.
             // 기존에 댓글 작성 후 목록을 다시 불러오는 로직과 동일합니다.
             if (boardNumber) {
                 getCommentListRequest(boardNumber).then(getCommentListResponse);
             }
         } else {
-            customErrToast('알 수 없는 오류가 발생했습니다: ' + code);
+            toast('알 수 없는 오류가 발생했습니다: ' + code);
         }
     };
     //          function: get favorite list response 처리 함수          //
     const getFavoriteListResponse = (responseBody: GetFavoriteListResponseDto | ResponseDto | null) => {
       if(!responseBody) return;
       const {code} = responseBody;
-      if(code ==='NB') customErrToast('존재하지 않는 게시물입니다.');
-      if(code ==='DBE') customErrToast('데이터베이스 오류입니다.');
+      if(code ==='NB') toast('존재하지 않는 게시물입니다.');
+      if(code ==='DBE') toast('데이터베이스 오류입니다.');
       if(code !== 'SU') return;
 
       const {favoriteList} = responseBody as GetFavoriteListResponseDto;
@@ -258,28 +266,30 @@ export default function BoardDetail() {
       } 
       const isFavorite = favoriteList.findIndex(favorite => favorite.email === loginUser.email) !== -1;
       setFavorite(isFavorite);
+      setShowFavorite(isFavorite);
     }
     //          function: get comment list response 처리 함수          //
     const getCommentListResponse = (responseBody: GetCommentListResponseDto | ResponseDto | null) => {
         if(!responseBody) return;
         const {code} = responseBody;
-        if(code ==='NB') customErrToast('존재하지 않는 게시물입니다.');
-        if(code ==='DBE') customErrToast('데이터베이스 오류입니다.');
+        if(code ==='NB') toast('존재하지 않는 게시물입니다.');
+        if(code ==='DBE') toast('데이터베이스 오류입니다.');
         if(code !== 'SU') return;
 
         const {commentList} = responseBody as GetCommentListResponseDto;
         setTotalList(commentList);
         setTotalCommentCount(commentList.length)
+        if (commentList.length > 0) setShowComment(true);
     }
     //          function: put favorite response 처리 함수          //
     const putFavoriteResponse = (responseBody: PutFavoriteResponseDto | ResponseDto | null) => {
       if(!responseBody) return;
       const {code} = responseBody;
-      if(code ==='VF') customErrToast('잘못된 접근입니다.');
-      if(code ==='NU') customErrToast('존재하지 않는 유저입니다.');
-      if(code ==='NB') customErrToast('존재하지 않는 게시물입니다.');
-      if(code ==='AF') customErrToast('인증에 실패했습니다.');
-      if(code ==='DBE') customErrToast('데이터베이스 오류입니다.');
+      if(code ==='VF') toast('잘못된 접근입니다.');
+      if(code ==='NU') toast('존재하지 않는 유저입니다.');
+      if(code ==='NB') toast('존재하지 않는 게시물입니다.');
+      if(code ==='AF') toast('인증에 실패했습니다.');
+      if(code ==='DBE') toast('데이터베이스 오류입니다.');
       if(code !== 'SU') return;
 
       if(!boardNumber) return;
@@ -289,11 +299,11 @@ export default function BoardDetail() {
     const postCommentResponse = (responseBody: PostCommentResponseDto | ResponseDto | null) => {
       if(!responseBody) return;
       const {code} = responseBody;
-      if(code ==='VF') customErrToast('잘못된 접근입니다.');
-      if(code ==='NU') customErrToast('존재하지 않는 유저입니다.');
-      if(code ==='NB') customErrToast('존재하지 않는 게시물입니다.');
-      if(code ==='AF') customErrToast('인증에 실패했습니다.');
-      if(code ==='DBE') customErrToast('데이터베이스 오류입니다.');
+      if(code ==='VF') toast('잘못된 접근입니다.');
+      if(code ==='NU') toast('존재하지 않는 유저입니다.');
+      if(code ==='NB') toast('존재하지 않는 게시물입니다.');
+      if(code ==='AF') toast('인증에 실패했습니다.');
+      if(code ==='DBE') toast('데이터베이스 오류입니다.');
       if(code !== 'SU') return;
 
       if(!boardNumber) return;
@@ -313,16 +323,16 @@ export default function BoardDetail() {
       setTimeout(() => setShowFloatingHeart(false), 1500);
 
       // 이미 하트 이펙트 중이면 무시
-  if (heartActive) return;
+      if (heartActive) return;
 
-  setHeartActive(true);
-  const newHearts = Array.from({ length: 30 }, (_, i) => Date.now() + i);
-  setGlobalHearts(newHearts);
+      setHeartActive(true);
+      const newHearts = Array.from({ length: 30 }, (_, i) => Date.now() + i);
+      setGlobalHearts(newHearts);
 
-  setTimeout(() => {
-    setGlobalHearts([]);
-    setHeartActive(false);
-  }, 600); // 1.5초 후 초기화
+      setTimeout(() => {
+        setGlobalHearts([]);
+        setHeartActive(false);
+      }, 600); // 1.5초 후 초기화
 
       // ❤️ 서버에 좋아요 요청 전송
       putFavoriteRequest(boardNumber, cookies.accessToken)
@@ -372,8 +382,6 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
 };
 
     //          effect: 게시물 번호 path variable 바뀔때마다 좋아요 및 댓글 리스트 불러오기          //
-
-
     useEffect(() => {
       if(!boardNumber) return;
       getFavoriteListRequest(boardNumber).then(getFavoriteListResponse);
@@ -389,7 +397,7 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
                     {isFavorite ? 
                       (
                         <>
-                          <div className={`icon favorite-fill-icon ${animate ? 'pop' : ''}`}></div>
+                          <div className={`icon favorite-fill-icon ${animate ? 'pop' : ''}`} onClick={onShowFavoriteClickHandler}></div>
                           {showFloatingHeart && <div className="floating-heart">❤️</div>}
                           {/* {globalHearts.map((id) => (
   <div key={id} className="global-heart" style={getRandomGlobalHeartStyle()}>
@@ -398,14 +406,14 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
 ))} */}
                         </>
                       ) :
-                      <div className={`icon favorite-light-icon ${animate ? 'pop' : ''}`}></div>
+                      <div className={`icon favorite-light-icon ${animate ? 'pop' : ''}`} onClick={onShowFavoriteClickHandler}></div>
                     }
                 </div>
                 <div className='board-detail-bottom-button-text'>{`좋아요`}</div>
                 <RollingNumber
                   value={favoriteList.length}
                   type='slide'
-                  className='board-detail-bottom-button-text'></RollingNumber>
+                  className='board-detail-bottom-button-rolling'></RollingNumber>
                 
                 <div className='icon-button' onClick={onShowFavoriteClickHandler}>
                     {showFavorite ?
@@ -417,14 +425,14 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
 
             {/* --- 댓글 관련 버튼 그룹 --- */}
             <div className='board-detail-bottom-button-group'>
-                <div className='icon-button'>
+                <div className='icon-button' onClick={onShowCommentClickHandler}>
                     <div className='icon comment-fill-icon'></div>
                 </div>
                 <div className='board-detail-bottom-button-text'>{`댓글`}</div>
                 <RollingNumber
                   value={totalCommentCount}
                   type='slide'
-                  className='board-detail-bottom-button-text'
+                  className='board-detail-bottom-button-rolling'
                 />
                 {/* 댓글 펼치기/접기 아이콘 버튼 */}
                 <div className='icon-button' onClick={onShowCommentClickHandler}>
@@ -433,6 +441,17 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
                         <div className='icon down-light-icon'></div>
                     }
                 </div>
+            </div>
+            <div className='board-detail-bottom-button-group'>
+                <div className='board-detail-bottom-button-text'>{`조회`}</div>
+                <InitRollingNumber
+                  initVal={viewCount-1}
+                  value={viewCount}
+                  type='slide'
+                  speed={400}
+                  delay={500}
+                  className='board-detail-bottom-button-rolling'
+                />
             </div>
         </div>
 
@@ -509,7 +528,7 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
     <div id='board-datail-wrapper'> 
       <div className='board-datail-container'>
         <BoardDetailTop />
-        <BoardDetailBottom />
+        <BoardDetailBottom viewCount={viewCount}/>
       </div>
     </div>
   )

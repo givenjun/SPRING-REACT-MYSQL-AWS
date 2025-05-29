@@ -163,6 +163,10 @@
     gap: 6px;
 }
 
+.board-detail-bottom-button-rolling {
+  display: flex;
+}
+
 .board-detail-bottom-button-text {
     color: rgba(0,0,0,0.7);
 

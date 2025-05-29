@@ -7,4 +7,5 @@ export default interface Board {
     writerEmail: string;
     writerNickname: string;
     writerProfileImage: string | null;
+    viewCount: number;
 }
