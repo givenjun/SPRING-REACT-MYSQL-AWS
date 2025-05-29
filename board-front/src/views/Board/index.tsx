@@ -17,10 +17,10 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useLoginUserStore } from 'stores';
 
-//          component: 메인 화면 컴포넌트               //
+//          component: 게시판 화면 컴포넌트               //
 export default function Board() {
 
-  //          component: 메인 화면 상단 컴포넌트               //
+  //          component: 게시판 화면 상단 컴포넌트               //
   const BoardTop = () => {
 
     //          function: 캐러셀 개수 설정              //
@@ -52,7 +52,7 @@ export default function Board() {
       getTop3BoardListRequest().then(getTop3BoardListResponse);
     }, []);
 
-    //          render: 메인 화면 상단 컴포넌트 렌더링          //
+    //          render: 게시판 화면 상단 컴포넌트 렌더링          //
     return (
       <div id='board-top-wrapper'>
         <div className='board-top-container'>
@@ -73,7 +73,7 @@ export default function Board() {
       </div>
     )
   }
-  //          component: 메인 화면 하단 컴포넌트               //
+  //          component: 게시판 화면 하단 컴포넌트               //
   const BoardBottom = () => {
 
     //          function: 네비게이트 함수             //
@@ -130,7 +130,7 @@ export default function Board() {
       getPopularListRequest().then(getPopularListRespone);
     }, []);
 
-    //          render: 메인 화면 하단 컴포넌트 렌더링          //
+    //          render: 게시판 화면 하단 컴포넌트 렌더링          //
     return (
       <div id='board-bottom-wrapper'>
         <div className='board-bottom-container'>
@@ -169,7 +169,7 @@ export default function Board() {
       </div>
     )
   }
-  //          render: 메인 화면 컴포넌트 렌더링          //
+  //          render: 게시판 화면 컴포넌트 렌더링          //
   return (
     <>
       <BoardTop />

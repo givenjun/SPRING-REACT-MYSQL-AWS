@@ -38,6 +38,8 @@ export default function Header() {
   const [ isBoardUpdatePage, setBoardUpdatePage ] = useState<boolean>(false);
   //          state: 유저 페이지 상태          //
   const [ isUserPage, setUserPage ] = useState<boolean>(false);
+  //          state: 공지사항항 페이지 상태          //
+  const [ isNoticePage, setNoticePage ] = useState<boolean>(false);
 
   //          function: 네비게이트 함수          //
   const navigate = useNavigate();
@@ -244,6 +246,8 @@ export default function Header() {
     setBoardUpdatePage(isBoardUpdatePage);
     const isUserPage = pathname.startsWith(USER_PATH(''));
     setUserPage(isUserPage);
+    const isNoticePage = pathname.startsWith(NOTICE_PATH());
+    setNoticePage(isNoticePage);
   }, [pathname])
   //          effect: login user가 변경될 때 마다 실행될 함수           //
   useEffect(() => {
@@ -266,8 +270,8 @@ export default function Header() {
           <div className='header-route' onClick={onNoticeClickHandler}>{'공지사항'}</div>
         </div>
         <div className='header-right-box'>
-          {(isAuthPage || isMainPage || isSearchPage || isBoardDetailPage || isBoardPage && !isBoardWritePage && !isBoardUpdatePage) && <SearchButton />}
-          {(isMainPage || isSearchPage || isBoardDetailPage || isUserPage || isBoardPage && !isBoardWritePage && !isBoardUpdatePage) && <MyPageButton />}
+          {(isAuthPage || isMainPage || isSearchPage || isBoardDetailPage || isBoardPage || isNoticePage && !isBoardWritePage && !isBoardUpdatePage) && <SearchButton />}
+          {(isMainPage || isSearchPage || isBoardDetailPage || isUserPage || isBoardPage || isNoticePage && !isBoardWritePage && !isBoardUpdatePage) && <MyPageButton />}
           {(isBoardWritePage || isBoardUpdatePage) && <UploadButton />}
         </div>
       </div>
