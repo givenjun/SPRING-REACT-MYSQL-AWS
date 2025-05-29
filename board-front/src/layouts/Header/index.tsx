@@ -13,6 +13,37 @@ import { customErrToast } from 'hooks';
 
 //          component: 헤더 레이아웃          //
 export default function Header() {
+
+  const [showHeader, setShowHeader] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      if (currentScrollY < 50) {
+        setShowHeader(true); // 화면 최상단이면 항상 표시
+      } else if (currentScrollY < lastScrollY) {
+        setShowHeader(true); // 스크롤을 올릴 때 표시
+      } else {
+        setShowHeader(false); // 스크롤을 내릴 때 숨김
+      }
+
+      setLastScrollY(currentScrollY);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, [lastScrollY]);
+
+  useEffect(() => {
+  const handleMouseMove = (e: MouseEvent) => {
+    if (e.clientY < 50) setShowHeader(true);
+  };
+
+  window.addEventListener('mousemove', handleMouseMove);
+  return () => window.removeEventListener('mousemove', handleMouseMove);
+}, []);
  
   //          state: 로그인 유저 상태          //
   const { loginUser, setLoginUser, resetLoginUser } = useLoginUserStore();
@@ -256,7 +287,7 @@ export default function Header() {
 
   //          render: 헤더 레이아웃 렌더링          //
   return (
-    <div id='header'>
+    <div id='header' className={showHeader ? 'visible' : 'hidden'}>
       <div className='header-container'> 
         <div className='header-left-box' onClick={onLogoClickHandler}>
           <div className='icon-box'>

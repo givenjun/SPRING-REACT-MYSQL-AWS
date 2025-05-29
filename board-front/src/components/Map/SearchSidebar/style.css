@@ -21,6 +21,7 @@
   right: -22px;
   transform: translateY(-50%);
   z-index: 10;
+  
 }
 
 .slideBtn {
@@ -55,19 +56,104 @@
   text-align: center;
 }
 
+.sidebar-search-input-box {
+    position: relative;
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.sidebar-title {
+  color: rgba(255, 255, 255, 1);
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 140%;
+  text-shadow: 0 0 5px rgba(0,0,0,0.2);
+}
+
 .sidebar-content {
   padding: 20px;
+  
+  background-color: rgba(0,0,0,0.2);
 }
 
 .sidebar-content input {
+  font-size: 16px;
   width: 100%;
-  margin: 5px 0;
+  height: 45px;
+  margin: 10px 0;
   padding: 8px;
+  border-radius: 5px 5px;
+  border: none;
+  outline: none;
   box-sizing: border-box;
 }
 
 .button-group {
   display: flex;
+  width: 100%;
+  height: 40px;
+  justify-content: space-around;
   gap: 10px;
   margin-top: 10px;
+}
+
+.button {
+  color: rgba(255, 255, 255, 1);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 140%;
+  text-shadow: 0 0 5px rgba(0,0,0,0.2);
+  width: 100%;
+  background: none;
+  border:none;
+
+  cursor: pointer;
+}
+
+.button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+  border:none;
+
+}
+
+.sidebar-search-input-box {
+  width: 100%;
+  margin-top: 12px;
+}
+
+.search-input-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.search-input-wrapper input {
+  width: 100%;
+  padding: 10px 36px 10px 12px; /* 오른쪽에 아이콘 공간 확보 */
+  border: none;
+  border-radius: 6px;
+  outline: none;
+  box-shadow: 0 0 0 1px #ccc;
+  font-size: 14px;
+}
+
+.search-input-wrapper input:focus {
+  box-shadow: 0 0 0 2px #888;
+}
+
+.search-icon {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 20px;
+  width: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.search-icon:hover {
+  border-radius: 50%;
+  background-color: rgba(0, 0, 0, 0.05);
 }

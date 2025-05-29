@@ -1,3 +1,4 @@
+// views/Main/index.tsx
 import React, { useState } from 'react';
 import { Map, MapMarker, MapTypeControl, ZoomControl } from 'react-kakao-maps-sdk';
 import SearchSidebar from 'components/Map/SearchSidebar';
@@ -7,12 +8,10 @@ import './style.css';
 export default function Main() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
-
   const { searchResults, center, searchPlaces } = useKakaoSearch();
 
   const handleSearch = (start: string, goal: string) => {
     if (start) searchPlaces(start);
-    // goal 관련 검색은 별도로 구현 필요
   };
 
   const handlePlaceClick = (index: number) => {
@@ -33,11 +32,7 @@ export default function Main() {
         toggleOpen={toggleSidebar}
         onSearch={handleSearch}
       />
-      <Map
-        center={center}
-        style={{ width: '100%', height: '100vh' }}
-        level={4}
-      >
+      <Map center={center} style={{ width: '100%', height: '100vh' }} level={4}>
         <MapTypeControl position="TOPRIGHT" />
         <ZoomControl position="RIGHT" />
         {searchResults.map((place, index) => (
