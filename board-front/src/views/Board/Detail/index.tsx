@@ -398,7 +398,7 @@ const getRandomGlobalHeartStyle = (): React.CSSProperties => {
                       (
                         <>
                           <div className={`icon favorite-fill-icon ${animate ? 'pop' : ''}`} onClick={onShowFavoriteClickHandler}></div>
-                          {showFloatingHeart && <div className="floating-heart">❤️</div>}
+                          {showFloatingHeart && <div className="floating-heart">{`❤️`}</div>}
                           {/* {globalHearts.map((id) => (
   <div key={id} className="global-heart" style={getRandomGlobalHeartStyle()}>
     ❤️
