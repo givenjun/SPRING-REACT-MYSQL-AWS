@@ -162,6 +162,7 @@ export default function Board() {
                 </div>
               </div>
             </div>
+            
           </div>
           <div className='board-bottom-pagination-box'>
             <Pagination

@@ -1,0 +1,123 @@
+/* 전체 채팅 박스 감싸는 카드 (board-bottom-popular-card 안에 포함됨) */
+.chat-page-wrapper {
+  padding-top: 80px;  /* 헤더 높이보다 살짝 여유 있게 */
+}
+
+.chat-wrapper {
+  display: flex;
+  height: 400px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 14px 28px rgba(0,0,0,0.25), 0 10px 10px rgba(0,0,0,0.22);
+}
+
+/* 왼쪽: 채팅 입력/출력 */
+.chat-left {
+  flex: 8;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  border-right: 1px solid #ccc;
+  box-sizing: border-box;
+}
+
+/* 오른쪽: 접속 유저 목록 */
+.chat-right {
+  flex: 2;
+  padding: 10px;
+  font-size: 14px;
+  overflow-y: auto;
+  box-sizing: border-box;
+}
+
+/* 메시지 출력 */
+.chat-messages {
+  flex: 1;
+  padding: 8px;
+  overflow-y: auto;
+  border: 1px solid #eee;
+  margin-bottom: 8px;
+  background-color: #fafafa;
+  border-radius: 4px;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* 개별 메시지 줄 스타일 */
+.chat-message-line {
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+
+/* 메시지 입력 영역 */
+.chat-input-box {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* 글자 수 표시 */
+.chat-input-info {
+  font-size: 12px;
+  color: #888;
+  text-align: right;
+  padding-right: 4px;
+}
+
+/* input + button을 가로로 배치 */
+.chat-input-row {
+  display: flex;
+  gap: 4px;
+}
+
+.chat-input-row input {
+  flex: 9;
+  padding: 6px 8px;
+  box-sizing: border-box;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+}
+
+.chat-input-row button {
+  flex: 1;
+  padding: 6px 0;
+  background-color: #4caf50;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  height: 100%;
+}
+
+.chat-input-row button:hover {
+  background-color: #43a047;
+}
+
+/* 접속자 영역 */
+.active-header {
+  display: flex;
+  align-items: center;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.status-dot {
+  width: 10px;
+  height: 10px;
+  background-color: #4caf50;
+  border-radius: 50%;
+  margin-right: 6px;
+}
+
+.active-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.active-list li {
+  margin: 4px 0;
+  padding: 0;
+  word-break: break-word;
+}

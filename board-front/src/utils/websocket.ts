@@ -1,34 +1,42 @@
-// 📁 utils/websocket.ts
-import SockJS from 'sockjs-client';
-import { Client, IMessage } from '@stomp/stompjs';
+// 📁 src/utils/websocket.ts
+import SockJS from 'sockjs-client'
+import { Client, IMessage } from '@stomp/stompjs'
 
-// 메시지 수신 콜백을 받아 STOMP Client 인스턴스 생성·반환
-export function createWebSocketClient(onMessageReceived: (msg: any) => void) {
+export function createWebSocketClient(
+  onMessageReceived: (msg: any) => void,
+  onActiveUsersReceived: (list: string[]) => void,
+  nickname: string
+) {
   const client = new Client({
     webSocketFactory: () => new SockJS('http://localhost:4000/ws'),
-    reconnectDelay: 5000, // 연결 끊기면 5초 뒤 자동 재시도
+    reconnectDelay: 5000,
     onConnect: () => {
-      console.log('[🔌 CONNECTED]');
-      client.subscribe('/topic/public', (message: IMessage) => {
-        console.log('[📩 RAW MESSAGE]', message);
-        try {
-          const msg = JSON.parse(message.body);
-          console.log('[📥 RECEIVED]', msg);
-          onMessageReceived(msg);
-        } catch (err) {
-          console.error('[❌ PARSE ERROR]', err);
-        }
-      });
-    },
-    onDisconnect: () => {
-      console.log('[🔌 DISCONNECTED]');
-    },
-    onStompError: (frame) => {
-      console.error('[❌ STOMP ERROR]', frame);
-    },
-    debug: (str) => console.log('[STOMP DEBUG]', str),
-  });
+      console.log('[🔌 STOMP CONNECTED]')
 
-  client.activate();
-  return client;
+      // 1) 채팅 메시지 구독
+      client.subscribe('/topic/public', (message: IMessage) => {
+        const chat = JSON.parse(message.body)
+        onMessageReceived(chat)
+      })
+
+      // 2) 활성 유저 목록 구독
+      client.subscribe('/topic/activeUsers', (message: IMessage) => {
+        const list: string[] = JSON.parse(message.body)
+        onActiveUsersReceived(list)
+      })
+
+      // 3) 접속 알리기
+      client.publish({
+        destination: '/app/chat.addUser',
+        headers: { nickname },
+        body: JSON.stringify({ senderNickname: nickname }),
+      })
+    },
+    onDisconnect: () => console.log('[🔌 STOMP DISCONNECTED]'),
+    onStompError: frame => console.error('[❌ STOMP ERROR]', frame),
+    debug: str => console.log('[STOMP DEBUG]', str),
+  })
+
+  client.activate()
+  return client
 }

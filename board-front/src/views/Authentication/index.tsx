@@ -55,6 +55,8 @@ export default function Authentication() {
       if (code !== 'SU') return;
 
       const { token, expirationTime } = responseBody as SignInResponseDto;
+
+      
       const now = new Date().getTime();
       const expires = new Date(now + expirationTime * 1000);
 
