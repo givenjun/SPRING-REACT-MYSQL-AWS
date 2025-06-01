@@ -12,6 +12,20 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<CommentEntity, Integer> {
 
+    CommentEntity findByCommentNumber(Integer commentNumber);
+
+    @Query(
+        value = "SELECT C.comment_number " +
+                "FROM board AS B " +
+                "INNER JOIN comment AS C ON B.board_number = C.board_number " +
+                "WHERE B.board_number = ?1",
+        nativeQuery = true
+    )
+    List<Integer> getCommentNumberList(Integer boardNumber);
+
+
+    boolean existsByCommentNumber(Integer commentNumber);
+    
     @Query(
             value =
                 "SELECT " +
@@ -20,7 +34,8 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
                 "U.nickname AS nickname, " +
                 "U.profile_image AS profileImage, " +
                 "C.write_datetime AS writeDatetime, " +
-                "C.content AS content " +
+                "C.content AS content, " +
+                "C.favorite_count AS favoriteCount " + 
                 "FROM comment AS C " +
                 "INNER JOIN user AS U " +
                 "ON C.user_email = U.email " +
@@ -30,6 +45,9 @@ public interface CommentRepository extends JpaRepository<CommentEntity, Integer>
 
     )
     List<GetCommentListResultSet> getCommentList(Integer boardNumber);
+
+    // 댓글 삭제용 쿼리
+    
 
     @Transactional
     void deleteByBoardNumber(Integer boardNumber);

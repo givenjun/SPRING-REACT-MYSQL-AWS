@@ -10,6 +10,7 @@ import GetFavoriteListResponseDto from './get-favorite-list.reponse.dto';
 import GetTop3BoardListResponseDto from './get-top-3-board-list.response.dto';
 import GetUserBoardListResponseDto from './get-user-board-list.response.dto';
 import IncreaseViewCountResponseDto from './increase-view-count.response.dto';
+import PutCommentFavoriteResponseDto from './put-comment-favorite.response.dto';
 import GetLatestBoardListResponseDto from './get-latest-board-list-response.dto';
 import GetSearchBoardListResponseDto from './get-search-board-list.responst.dto';
 
@@ -26,7 +27,8 @@ export type {
     GetFavoriteListResponseDto,
     GetTop3BoardListResponseDto,
     GetUserBoardListResponseDto,
-    IncreaseViewCountResponseDto,
+    IncreaseViewCountResponseDto, 
+    PutCommentFavoriteResponseDto, 
     GetLatestBoardListResponseDto,
     GetSearchBoardListResponseDto
 }

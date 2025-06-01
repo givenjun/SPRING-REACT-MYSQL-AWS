@@ -5,4 +5,5 @@ export default interface CommentListItem {
     writeDatetime: string;
     content: string;
     userEmail: string;          // ✨ 댓글 작성자 이메일 (삭제 권한 확인용)
+    favoriteCount: number;
 }
