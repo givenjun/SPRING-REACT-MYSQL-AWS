@@ -210,3 +210,18 @@
 .chat-button:hover {
   background-color: #e0e0e0;
 }
+
+.top3-thumbnail-wrapper {
+  width: 300px;          /* 슬라이더에서 보여줄 크기 */
+  height: 200px;         /* 필요에 따라 조절 */
+  overflow: hidden;
+  border-radius: 10px;   /* 둥글게 하고 싶으면 */
+  flex-shrink: 0;
+}
+
+.top3-thumbnail {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;     /* 핵심: 꽉 채우면서 잘리지 않게 */
+  display: block;
+}

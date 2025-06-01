@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import './style.css';
 import { BoardListItem } from 'types/interface';
 import Top3Item from 'components/Top3Item';
@@ -17,23 +17,50 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useLoginUserStore } from 'stores';
 
+
 //          component: 메인 화면 컴포넌트               //
 export default function Board() {
+  const sliderRef = useRef<Slider>(null);
+
+  
 
   //          component: 메인 화면 상단 컴포넌트               //
   const BoardTop = () => {
 
     //          function: 캐러셀 개수 설정              //
+  //   const settings = {
+  //   dots: true,
+  //   infinite: true,
+  //   speed: 500,
+  //   slidesToShow: 3,
+  //   slidesToScroll: 1,
+  //   arrows: false,
+  //   autoplay: true,
+  //   autoplaySpeed: 2000,
+  //   // ✨ 핵심 설정 추가
+  //   centerMode: false,
+  //   centerPadding: '0px',
+  //   focusOnSelect: false,
+  //   swipeToSlide: true,
+  //   waitForAnimate: true,
+  //   // ✨ dot 갯수 조절 위해 이 콜백 활용
+  //   beforeChange: (current: number, next: number) => {
+  //     if (next === 8) {
+  //       sliderRef?.current?.slickGoTo(0);
+  //     }
+  //   }
+  // };
     const settings = {
       dots: true,
       infinite: true,
-      speed: 500,
-      slidesToShow: 3,
-      slidesToScroll: 1,
-      arrows: false,
+      speed: 300,
+      slidesToShow: 1,
+      centerMode: true,
+      variableWidth: true,
       autoplay: true,
       autoplaySpeed: 2000
     };
+
     //          state: 주간 top3 게시물 리스트 상태           //
     const [top3BoardList, setTop3BoardList] = useState<BoardListItem[]>([]);
 
@@ -45,6 +72,9 @@ export default function Board() {
       if (code !== 'SU') return;
 
       const { top3List } = responseBody as GetTop3BoardListResponseDto;
+      // ✅ 콘솔에 받아온 리스트 로그 출력
+      console.log('🔥 받아온 top3List:', top3List);
+      console.log('🔥 받아온 게시물 개수:', top3List.length);
       setTop3BoardList(top3List);
     }
     //          effect: 첫 마운트 시 실행될 함수            //
